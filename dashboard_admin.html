@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard (Admin)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🛠️ ระบบแจ้งซ่อม (ส่วนเจ้าหน้าที่)</h1>
+            <div>
+                <span class="user-badge">👤 ช่างเทคนิค (admin)</span>
+                <a href="index.html" class="logout-btn">ออก</a>
+            </div>
+        </header>
+
+        <h2>⏳ รายการแจ้งซ่อมใหม่</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>วันที่</th>
+                    <th>อุปกรณ์</th>
+                    <th>อาการ</th>
+                    <th>สถานที่</th>
+                    <th>ผู้แจ้ง</th>
+                    <th>สถานะ</th>
+                    <th>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2026-01-28 09:15</td>
+                    <td><span class="col-device">COM-005</span></td>
+                    <td>เปิดไม่ติด</td>
+                    <td><span class="col-location">Lab 2</span></td>
+                    <td>นายสมชาย</td>
+                    <td><span class="badge status-In">In Progress</span></td>
+                    <td><a href="update_repair.html" class="btn-action">✏️ แก้ไข</a></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

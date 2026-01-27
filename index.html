@@ -3,30 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>เข้าสู่ระบบ - IT Helpdesk</title>
+    <title>เข้าสู่ระบบ</title>
     <link rel="stylesheet" href="style.css">
+    <script>
+        function checkLogin() {
+            // ดึงค่าที่กรอกมา
+            var user = document.getElementById("username").value;
+            
+            if (user === "admin") {
+                // ถ้าเป็นแอดมิน ให้ไปหน้าช่าง
+                window.location.href = "dashboard_admin.html";
+            } else if (user === "student") {
+                // ถ้าเป็นนักเรียน ให้ไปหน้านักเรียน
+                window.location.href = "dashboard_student.html";
+            } else {
+                alert("กรุณากรอก user เป็น 'admin' หรือ 'student' เท่านั้น (Demo Mode)");
+            }
+        }
+    </script>
 </head>
 <body class="auth-body">
     <div class="auth-wrapper">
         <div class="auth-box">
             <div style="margin-bottom: 20px;">
-                <h1 style="justify-content: center;">🔐 เข้าสู่ระบบ</h1>
-                <p style="color: #b0b3b8; font-size: 14px; margin-top: 5px;">ระบบแจ้งซ่อม IT Helpdesk</p>
+                <h1>🔐 เข้าสู่ระบบ</h1>
+                <p style="color: #b0b3b8;">IT Helpdesk System</p>
             </div>
             
             <div class="input-group">
-                <label>ชื่อผู้ใช้งาน (Username)</label>
-                <input type="text" placeholder="กรอกชื่อผู้ใช้งาน..." value="admin">
+                <label>ชื่อผู้ใช้งาน</label>
+                <input type="text" id="username" placeholder="admin หรือ student">
             </div>
             <div class="input-group">
-                <label>รหัสผ่าน (Password)</label>
-                <input type="password" placeholder="กรอกรหัสผ่าน..." value="1234">
+                <label>รหัสผ่าน</label>
+                <input type="password" value="1234">
             </div>
 
-            <a href="dashboard.html" class="btn-login">เข้าสู่ระบบ</a>
+            <button class="btn-login" onclick="checkLogin()">เข้าสู่ระบบ</button>
 
             <div style="margin-top: 20px; border-top: 1px solid #333; padding-top: 15px;">
-                <small style="color: #555;">* ระบบ Demo สำหรับแสดงผลงาน</small>
+                <small style="color: #555;">
+                    User: <b>admin</b> (สำหรับช่าง)<br>
+                    User: <b>student</b> (สำหรับนักศึกษา)
+                </small>
             </div>
         </div>
     </div>

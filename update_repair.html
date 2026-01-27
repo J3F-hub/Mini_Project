@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>อัปเดตงานซ่อม</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-body"> <div class="auth-wrapper">
+        <div class="auth-box" style="max-width: 600px; text-align: left;">
+            <h2 style="margin-top:0;">🔧 อัปเดตงานซ่อม: COM-005</h2>
+            
+            <div class="input-group">
+                <label>สถานะงานซ่อม</label>
+                <select>
+                    <option>Pending</option>
+                    <option selected>In Progress</option>
+                    <option>Completed</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>บันทึกช่าง / สาเหตุ</label>
+                <textarea rows="3">กำลังตรวจสอบเมนบอร์ด</textarea>
+            </div>
+
+            <div class="input-group">
+                <label>ค่าใช้จ่าย (บาท)</label>
+                <input type="number" value="0">
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-login" onclick="alert('บันทึกข้อมูลเรียบร้อย! (Demo)'); window.location.href='dashboard_admin.html'">บันทึก</button>
+                <a href="dashboard_admin.html" class="btn-login" style="background: #333; text-align: center;">ยกเลิก</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
