@@ -1,16 +1,18 @@
-/* Google Font */
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
 
 :root {
-    /* เปลี่ยนชุดสีเป็น Dark Mode */
-    --primary-blue: #3b82f6;      /* ฟ้าสว่างขึ้นเพื่อให้เด่นบนพื้นดำ */
-    --light-blue: #60a5fa;        /* ฟ้าอ่อนแบบสว่าง */
-    --teal: #00cec9;              /* เขียวน้ำทะเล */
+    /* --- Dark Mode Palette --- */
+    --primary-blue: #3b82f6;      /* ฟ้าสว่าง */
+    --teal: #00cec9;              /* เขียวมิ้นท์ */
+    --red: #ef4444;               /* แดง (ปุ่มลบ/Logout) */
+    --yellow: #f59e0b;            /* เหลือง (ดาว/Pending) */
+    --green: #10b981;             /* เขียว (Completed) */
     
-    --bg-color: #111111;          /* สีพื้นหลังดำเข้ม (ตามภาพ) */
-    --text-color: #e4e6eb;        /* สีตัวหนังสือขาวควันบุหรี่ (อ่านง่ายสบายตา) */
-    --card-bg: #1e1e1e;           /* สีพื้นหลังของกล่อง/การ์ด (เทาเข้ม) */
-    --border-color: #333333;      /* สีเส้นขอบเทาเข้ม */
+    --bg-color: #000000;          /* พื้นหลังดำสนิท */
+    --card-bg: #1c1c1e;           /* กล่องสีเทาเข้ม */
+    --text-color: #e4e6eb;        /* ตัวหนังสือขาว */
+    --text-muted: #b0b3b8;        /* ตัวหนังสือเทา */
+    --border-line: #333333;       /* เส้นขอบ */
     
     --border-radius: 15px;
 }
@@ -21,14 +23,9 @@ body {
     margin: 0;
     padding: 40px 20px;
     min-height: 100vh;
-    
-    /* --- พื้นหลัง Dark Mode แบบในรูป --- */
     background-color: var(--bg-color);
-    /* สร้างลายจุดจางๆ (Dot Pattern) */
     background-image: radial-gradient(#333 1px, transparent 1px);
-    background-size: 30px 30px; /* ระยะห่างระหว่างจุด */
-    /* -------------------------------- */
-    
+    background-size: 30px 30px;
     display: flex;
     justify-content: center;
 }
@@ -36,140 +33,71 @@ body {
 .container {
     width: 100%;
     max-width: 1200px;
-    /* เปลี่ยนพื้นหลังเป็นโปร่งใส เพื่อให้เห็นลายพื้นหลังด้านหลัง */
     background: transparent;
-    padding: 40px;
-    border-radius: 25px;
-    /* เอา backdrop-filter และเงาออก เพื่อความคลีนแบบในรูป */
-    /* box-shadow: 0 20px 50px rgba(0,0,0,0.1); */
-    /* backdrop-filter: blur(10px); */
 }
 
 /* Header */
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-bottom: 20px;
-    /* เปลี่ยนสีเส้นขอบด้านล่าง */
-    border-bottom: 2px solid var(--border-color);
-    margin-bottom: 30px;
+header { 
+    background: var(--card-bg); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 25px 35px; 
+    margin-bottom: 30px; 
+    border-radius: 20px; 
+    border: 1px solid var(--border-line);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
+
 h1 { color: var(--primary-blue); margin: 0; display: flex; align-items: center; font-size: 24px;}
-.user-badge {
-    /* ปรับสีป้ายชื่อผู้ใช้ */
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    padding: 8px 15px;
-    border-radius: 30px;
-    font-size: 14px;
-    color: #b0b3b8; /* สีเทาอ่อน */
-    font-weight: 600;
-}
+.user-badge { background: #000; padding: 8px 15px; border-radius: 30px; font-size: 14px; color: var(--text-muted); border: 1px solid var(--border-line);}
+.logout-btn { color: var(--red); text-decoration: none; font-size: 14px; font-weight: bold; margin-left: 15px; transition: 0.2s; }
+.logout-btn:hover { color: #fff; }
 
-/* Headings */
-h2 {
-    font-size: 18px;
-    color: var(--primary-blue);
-    margin-top: 40px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-}
-h2::before { content: ''; display: inline-block; width: 8px; height: 25px; background: var(--teal); margin-right: 10px; border-radius: 4px;}
+/* Section Headings */
+h2 { font-size: 20px; color: var(--primary-blue); margin-top: 40px; margin-bottom: 15px; display: flex; align-items: center; border-left: 5px solid var(--primary-blue); padding-left: 15px;}
 
-/* --- Table Design แบบแยกกล่อง (Card Style) --- */
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 15px;
-}
+/* Table */
+table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
+th { text-align: left; color: var(--text-muted); font-weight: 500; padding: 0 20px 10px 20px; font-size: 14px; text-transform: uppercase; }
 
-th {
-    text-align: left;
-    color: #b0b3b8; /* สีหัวตารางเทาอ่อน */
-    font-weight: 500;
-    padding: 0 20px 10px 20px;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+tbody tr { 
+    background-color: var(--card-bg); 
+    border: 1px solid var(--border-line); 
+    transition: transform 0.2s; 
+    border-radius: 12px;
 }
+tbody tr:hover { transform: translateY(-3px); background-color: #2c2c2e; border-color: var(--primary-blue); }
 
-tbody tr {
-    /* เปลี่ยนสีพื้นหลังของแถวเป็นสีการ์ด */
-    background-color: var(--card-bg);
-    /* เพิ่มเส้นขอบเพื่อให้ดูมีมิติ */
-    border: 1px solid var(--border-color);
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2); /* เงาเข้มขึ้นเล็กน้อย */
-    transition: transform 0.2s, border-color 0.2s;
-}
+td { padding: 25px 20px; vertical-align: middle; border: none; font-size: 15px; }
+td:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+td:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
 
-tbody tr:hover {
-    transform: scale(1.01);
-    /* เปลี่ยนสีขอบเมื่อเอาเมาส์ไปชี้ */
-    border-color: var(--primary-blue);
-    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-}
-
-td {
-    padding: 20px;
-    vertical-align: middle;
-    border: none;
-    font-size: 15px;
-}
-
-/* ทำมุมมนให้แถว */
-td:first-child { border-top-left-radius: var(--border-radius); border-bottom-left-radius: var(--border-radius); }
-td:last-child { border-top-right-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
-
-/* --- จัดระเบียบข้อมูลในตาราง --- */
-.col-date { font-size: 13px; color: #b0b3b8; white-space: nowrap; }
-.col-device {
-    font-weight: 700;
-    color: #ffffff;
-    font-size: 16px;
-    /* ปรับพื้นหลังชื่ออุปกรณ์ */
-    background: var(--primary-blue);
-    padding: 5px 10px;
-    border-radius: 8px;
-    display: inline-block;
-}
-.col-problem { color: var(--text-color); line-height: 1.4; }
+/* Elements */
+.col-device { font-weight: 700; color: #fff; font-size: 16px; background: var(--primary-blue); padding: 6px 12px; border-radius: 8px; display: inline-block;}
 .col-location { font-weight: 600; color: var(--teal); }
-.col-user { font-size: 14px; font-weight: 500; color: #b0b3b8; display: flex; align-items: center;}
-.col-user span { margin-left: 5px; }
+.badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; display: inline-block; text-align: center; min-width: 80px; border: 1px solid;}
 
-/* Status Badges */
-.badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; display: inline-block; text-align: center; min-width: 80px;}
-/* ปรับสี Badge ให้เข้ากับ Dark Mode */
-.status-Pending { background: rgba(255, 193, 7, 0.2); color: #ffc107; border: 1px solid #ffc107; }
-.status-In { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid #60a5fa; }
-.status-Completed { background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #34d399; }
+.status-Pending { background: rgba(245, 158, 11, 0.1); color: var(--yellow); border-color: var(--yellow); }
+.status-In { background: rgba(59, 130, 246, 0.1); color: var(--primary-blue); border-color: var(--primary-blue); }
+.status-Completed { background: rgba(16, 185, 129, 0.1); color: var(--green); border-color: var(--green); }
 
-/* --- Buttons --- */
-.action-group { display: flex; gap: 8px; }
-.btn {
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-    border: none;
-    cursor: pointer;
+/* Login Page Styling */
+.auth-wrapper { display: flex; justify-content: center; align-items: center; min-height: 80vh; width: 100%; }
+.auth-box { 
+    background-color: var(--card-bg); 
+    padding: 40px; 
+    border-radius: 20px; 
+    border: 1px solid var(--border-line); 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+    width: 100%; max-width: 400px; text-align: center; 
 }
-.btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.input-group { text-align: left; margin-bottom: 20px; }
+.input-group label { display: block; color: var(--text-color); font-size: 14px; margin-bottom: 8px; font-weight: 500; }
+.input-group input { width: 100%; padding: 12px 15px; border-radius: 10px; border: 1px solid var(--border-line); background-color: #2c2c2e; color: #fff; font-size: 14px; box-sizing: border-box; }
+.input-group input:focus { border-color: var(--primary-blue); outline: none; }
 
-.btn-add { background: linear-gradient(45deg, #00b894, #00cec9); color: white; padding: 12px 25px; font-size: 16px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);}
-/* ปรับสีปุ่ม Update */
-.btn-update { background: #3a3b3c; color: #ffffff; border: 1px solid #555; }
-.btn-update:hover { background: var(--primary-blue); color: white; border-color: var(--primary-blue); }
-.btn-delete { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
-.btn-delete:hover { background: #ef4444; color: white; }
-.btn-rate { background: #f59e0b; color: #000000; }
+.btn-login { width: 100%; padding: 12px; background-color: var(--primary-blue); color: white; border: none; border-radius: 50px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; display: block; text-decoration: none; box-sizing: border-box;}
+.btn-login:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4); }
 
-/* ราคารวม */
-/* ปรับสีกล่องราคารวม */
-.cost-display { background: rgba(236, 72, 153, 0.2); padding: 8px 15px; border-radius: 10px; font-weight: bold; color: #f472b6; display: inline-block; border: 1px solid #f472b6;}
+.cost-display { font-size: 16px; font-weight: bold; color: #f472b6; }

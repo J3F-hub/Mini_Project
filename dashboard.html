@@ -10,9 +10,9 @@
     <div class="container">
         <header>
             <h1>💻 ระบบแจ้งซ่อม IT Helpdesk</h1>
-            <div style="display: flex; gap: 15px; align-items: center;">
-                <span class="user-badge">👤 ช่างเทคนิค (admin)</span>
-                <a href="index.html" style="color: #ef4444; text-decoration: none; font-size: 14px;">ออกจากระบบ ➔</a>
+            <div style="display: flex; align-items: center;">
+                <span class="user-badge">👤 ช่างเทคนิค ประจำศูนย์ (admin)</span>
+                <a href="index.html" class="logout-btn">ออกจากระบบ ➔</a>
             </div>
         </header>
 
@@ -20,30 +20,33 @@
         <table>
             <thead>
                 <tr>
-                    <th>วันที่</th>
+                    <th>วันที่แจ้ง</th>
                     <th>อุปกรณ์</th>
-                    <th>อาการ</th>
+                    <th>อาการเสีย</th>
                     <th>สถานที่</th>
                     <th>ผู้แจ้ง</th>
                     <th>สถานะ</th>
+                    <th>จัดการ</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="color: #636e72; font-size: 13px;">2026-01-27 10:30</td>
-                    <td><span class="col-device">COM-002</span></td>
-                    <td>เปิดไม่ติด ไฟไม่เข้า</td>
+                    <td style="color: #b0b3b8; font-size: 13px;">2026-01-28 09:15</td>
+                    <td><span class="col-device">COM-005</span></td>
+                    <td>เครื่องเปิดไม่ติด ไฟไม่เข้า</td>
                     <td><span class="col-location">Lab 2</span></td>
                     <td>นักศึกษา A</td>
                     <td><span class="badge status-In">In Progress</span></td>
+                    <td><span style="color: #3b82f6; cursor: pointer;">✏️ แก้ไข</span></td>
                 </tr>
                 <tr>
-                    <td style="color: #636e72; font-size: 13px;">2026-01-27 11:15</td>
-                    <td><span class="col-device">COM-005</span></td>
-                    <td>จอฟ้า (Blue Screen)</td>
-                    <td><span class="col-location">Library</span></td>
+                    <td style="color: #b0b3b8; font-size: 13px;">2026-01-28 10:30</td>
+                    <td><span class="col-device">PRN-002</span></td>
+                    <td>กระดาษติด พิมพ์ไม่ออก</td>
+                    <td><span class="col-location">Office</span></td>
                     <td>อาจารย์ B</td>
                     <td><span class="badge status-Pending">Pending</span></td>
+                    <td><span style="color: #3b82f6; cursor: pointer;">✏️ แก้ไข</span></td>
                 </tr>
             </tbody>
         </table>
@@ -52,21 +55,23 @@
         <table>
             <thead>
                 <tr>
-                    <th>วันที่</th>
+                    <th>วันที่แจ้ง</th>
                     <th>อุปกรณ์</th>
                     <th>การแก้ไข</th>
+                    <th>ค่าใช้จ่าย</th>
                     <th>สถานะ</th>
                     <th>ประเมิน</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td style="color: #636e72; font-size: 13px;">2026-01-26 14:20</td>
+                    <td style="color: #b0b3b8; font-size: 13px;">2026-01-27 14:20</td>
                     <td><span class="col-device">COM-001</span></td>
                     <td>
-                        <div style="font-weight: bold; color: #34d399;">✓ เปลี่ยนแรมใหม่</div>
-                        <div style="font-size: 12px; color: #b0b3b8;">(อาการเดิม: เครื่องช้า)</div>
+                        <div style="font-weight: bold; color: #10b981;">✓ เปลี่ยนจอภาพใหม่</div>
+                        <div style="font-size: 12px; color: #b0b3b8;">(อาการเดิม: จอเป็นเส้น)</div>
                     </td>
+                    <td><span class="cost-display">฿2,201</span></td>
                     <td><span class="badge status-Completed">Completed</span></td>
                     <td>⭐⭐⭐⭐⭐</td>
                 </tr>
