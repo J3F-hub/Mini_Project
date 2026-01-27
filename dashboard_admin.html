@@ -10,12 +10,12 @@
         <header>
             <h1>🛠️ ระบบแจ้งซ่อม (ส่วนเจ้าหน้าที่)</h1>
             <div>
-                <span class="user-badge">👤 ช่างเทคนิค (admin)</span>
-                <a href="index.html" class="logout-btn">ออก</a>
+                <span class="user-badge">👤 ช่างเทคนิค ประจำศูนย์ (admin)</span>
+                <a href="index.html" class="logout-btn">ออกจากระบบ</a>
             </div>
         </header>
 
-        <h2>⏳ รายการแจ้งซ่อมใหม่</h2>
+        <h2>⏳ รายการที่กำลังดำเนินการ (Active)</h2>
         <table>
             <thead>
                 <tr>
@@ -37,6 +37,42 @@
                     <td>นายสมชาย</td>
                     <td><span class="badge status-In">In Progress</span></td>
                     <td><a href="update_repair.html" class="btn-action">✏️ แก้ไข</a></td>
+                </tr>
+                 <tr>
+                    <td>2026-01-28 11:00</td>
+                    <td><span class="col-device">PRN-003</span></td>
+                    <td>กระดาษติด</td>
+                    <td><span class="col-location">Office</span></td>
+                    <td>อาจารย์สมหญิง</td>
+                    <td><span class="badge status-Pending">Pending</span></td>
+                    <td><a href="update_repair.html" class="btn-action">✏️ แก้ไข</a></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h2>✅ ประวัติการซ่อมเสร็จสิ้น (Completed)</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>วันที่</th>
+                    <th>อุปกรณ์</th>
+                    <th>การแก้ไข</th>
+                    <th>ค่าใช้จ่าย</th>
+                    <th>สถานะ</th>
+                    <th>ลบ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>2026-01-27 14:20</td>
+                    <td><span class="col-device">COM-001</span></td>
+                    <td>
+                        <div style="color: #10b981;">✓ เปลี่ยนจอภาพใหม่</div>
+                        <div style="font-size: 12px; color: #b0b3b8;">อะไหล่: จอ LED 24"</div>
+                    </td>
+                    <td><span class="cost-display">฿2,200</span></td>
+                    <td><span class="badge status-Completed">Completed</span></td>
+                    <td><a href="#" class="btn-action" style="color: #ef4444; border-color: #ef4444;">🗑️</a></td>
                 </tr>
             </tbody>
         </table>
