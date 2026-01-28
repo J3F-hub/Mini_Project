@@ -64,7 +64,7 @@ def dashboard():
         else:
             active_repairs.append(repair)
     
-    return render_template('index.html', 
+    return render_template('homepage.html', 
                            name=session['fullname'], 
                            role=session['role'], 
                            active_repairs=active_repairs, 
