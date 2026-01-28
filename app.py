@@ -36,7 +36,16 @@ def login():
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
+
+    # ส่งข้อมูลว่างเพื่อกัน error
+    return render_template(
+        'index.html',
+        name=session.get('fullname', 'Local User'),
+        role=session.get('role', 'user'),
+        active_repairs=[],
+        completed_repairs=[]
+    )
+
     conn = get_db_connection()
     if session['role'] == 'admin':
         all_repairs = conn.execute('''
