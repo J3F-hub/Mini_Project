@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>เข้าสู่ระบบ - IT Helpdesk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="auth-body">
+
+    <div class="auth-wrapper">
+        <div class="auth-box">
+            <div class="auth-header">
+                <h1>🔐 เข้าสู่ระบบ</h1>
+                <p>ระบบแจ้งซ่อม IT Helpdesk</p>
+            </div>
+
+            <form method="POST">
+                <div class="input-group">
+                    <label>ชื่อผู้ใช้งาน (Username)</label>
+                    <input type="text" name="username" placeholder="กรอกชื่อผู้ใช้งาน..." required autofocus>
+                </div>
+
+                <div class="input-group">
+                    <label>รหัสผ่าน (Password)</label>
+                    <input type="password" name="password" placeholder="กรอกรหัสผ่าน..." required>
+                </div>
+
+                <button type="submit" class="btn-login">เข้าสู่ระบบ</button>
+            </form>
+
+            <div class="auth-footer" style="border: none; margin-top: 15px;">
+                <small style="color: #b2bec3;">* สำหรับเจ้าหน้าที่และนักศึกษาเท่านั้น</small>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

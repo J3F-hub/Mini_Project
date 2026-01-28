@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>แจ้งซ่อมอุปกรณ์ - IT Helpdesk</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        form { border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        button { margin-top: 20px; padding: 10px 20px; background-color: #007bff; color: white; border: none; cursor: pointer; }
+        button:hover { background-color: #0056b3; }
+        .back-link { display: block; margin-top: 15px; color: #666; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <h1>📝 ฟอร์มแจ้งซ่อมคอมพิวเตอร์</h1>
+    
+    <form method="POST">
+        <label>ชื่ออุปกรณ์ (Device Name):</label>
+        <input type="text" name="device_name" placeholder="เช่น เครื่อง PC-01, Printer Canon" required>
+
+        <label>อาการที่พบ (Problem Detail):</label>
+        <textarea name="problem_detail" rows="4" placeholder="เช่น เปิดไม่ติด, จอฟ้า, กระดาษติด" required></textarea>
+
+        <label>สถานที่/ห้อง (Location):</label>
+        <input type="text" name="location" placeholder="เช่น ห้องพักครู 2, ห้อง Lab 1" required>
+
+        <button type="submit">📄 ส่งเรื่องแจ้งซ่อม</button>
+    </form>
+
+    <a href="{{ url_for('dashboard') }}" class="back-link">◀️กลับหน้าหลัก</a>
+</body>
+</html>

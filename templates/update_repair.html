@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>อัปเดตงานซ่อม - IT Helpdesk</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+        form { border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        .readonly { background-color: #f0f0f0; color: #555; }
+        button { margin-top: 20px; padding: 10px 20px; background-color: #007bff; border: none; cursor: pointer; color: white; font-weight: bold; width: 100%; }
+        button:hover { background-color: #0056b3; }
+        
+        /* กรอบใส่ราคา */
+        .cost-section { background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #ced4da; }
+        .cost-label { color: #0056b3; font-size: 1.1em; }
+    </style>
+</head>
+<body>
+    <h1>🛠 อัปเดตสถานะงานซ่อม</h1>
+    
+    <form method="POST">
+        <label>อุปกรณ์ (Device):</label>
+        <input type="text" value="{{ repair['device_name'] }}" class="readonly" readonly>
+
+        <label>อาการเสีย (Problem):</label>
+        <textarea rows="3" class="readonly" readonly>{{ repair['problem_detail'] }}</textarea>
+
+        <hr>
+
+        <label>สถานะการดำเนินงาน (Status):</label>
+        <select name="status">
+            <option value="Pending" {% if repair['status'] == 'Pending' %}selected{% endif %}>🔴 รอดำเนินการ (Pending)</option>
+            <option value="In Progress" {% if repair['status'] == 'In Progress' %}selected{% endif %}>🔵 กำลังซ่อม (In Progress)</option>
+            <option value="Completed" {% if repair['status'] == 'Completed' %}selected{% endif %}>🟢 ซ่อมเสร็จแล้ว (Completed)</option>
+        </select>
+
+        <label>บันทึกการซ่อม/วิธีแก้ไข (Technician Note):</label>
+        <textarea name="technician_note" rows="3" placeholder="เช่น เปลี่ยนอะไหล่ใหม่, ลง Windows ใหม่">{{ repair['technician_note'] or '' }}</textarea>
+
+        <div class="cost-section">
+            <label class="cost-label">💰 สรุปค่าใช้จ่าย</label>
+            
+            <label>แจกแจงรายละเอียด (Cost Details):</label>
+            <textarea name="spare_parts" rows="2" placeholder="เช่น ค่าลง Windows 300, ค่าทำความสะอาด 100, ค่า RAM ใหม่ 900">{{ repair['spare_parts'] or '' }}</textarea>
+
+            <label>ราคารวมสุทธิ (Total Price):</label>
+            <input type="number" name="cost" placeholder="ระบุยอดรวม (บาท)" value="{{ repair['cost'] or 0 }}" style="font-size: 1.2em; font-weight: bold; color: #d63384;">
+        </div>
+
+        <button type="submit">💾 บันทึกการเปลี่ยนแปลง</button>
+    </form>
+
+    <a href="{{ url_for('dashboard') }}" style="display:block; margin-top:15px; text-align:center;">❌ยกเลิก / ◀️กลับหน้าหลัก</a>
+</body>
+</html>
