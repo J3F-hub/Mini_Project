@@ -74,7 +74,7 @@ def dashboard():
             active_repairs.append(repair)
     
     # ส่งข้อมูลไปที่ index.html (ย้ำว่า index.html)
-    return render_template('index.html', 
+    return render_template('homepage.html', 
                            name=session['fullname'], 
                            role=session['role'], 
                            active_repairs=active_repairs, 

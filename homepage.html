@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Helpdesk Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div>
+            <h1>💻 ระบบแจ้งซ่อม IT Helpdesk</h1>
+            <span style="color: #b2bec3; font-size: 14px;">วิทยาลัยเทคนิค... (แผนกเทคโนโลยีคอมพิวเตอร์)</span>
+        </div>
+        <div style="text-align: right;">
+            <div class="user-badge">
+                👤 {{ name }} <span style="color: #0984e3;">({{ role }})</span>
+            </div>
+            <a href="{{ url_for('logout') }}" style="color: #ff7675; text-decoration: none; font-size: 13px; margin-top: 8px; display: inline-block;">ออกจากระบบ ➜</a>
+        </div>
+    </header>
+
+    {% if role == 'user' %}
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="{{ url_for('report') }}" class="btn btn-add">➕ แจ้งซ่อมใหม่</a>
+        </div>
+    {% endif %}
+
+    <h2>⏳ รายการที่กำลังดำเนินการ</h2>
+    <table>
+        <thead>
+            <tr>
+                <th width="15%">📅 วันที่</th>
+                <th width="15%">🖥️ อุปกรณ์</th>
+                <th width="25%">⚠️ อาการ</th>
+                <th width="10%">📍 สถานที่</th>
+                {% if role == 'admin' %} <th width="15%">👤 ผู้แจ้ง</th> {% endif %}
+                <th width="10%">💡สถานะ</th>
+                <th>⚙️จัดการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for repair in active_repairs %}
+            <tr>
+                <td class="col-date">{{ repair['report_date'] }}</td>
+                <td><span class="col-device">{{ repair['device_name'] }}</span></td>
+                <td class="col-problem">{{ repair['problem_detail'] }}</td>
+                <td class="col-location">{{ repair['location'] }}</td>
+                {% if role == 'admin' %} 
+                    <td class="col-user">
+                         {{ repair['fullname'] }}
+                    </td> 
+                {% endif %}
+                <td><span class="badge status-{{ repair['status'].split(' ')[0] }}">{{ repair['status'] }}</span></td>
+                <td>
+                    <div class="action-group">
+                        {% if role == 'admin' %}
+                            <a href="{{ url_for('update_repair', repair_id=repair['repair_id']) }}" class="btn btn-update">✏️แก้ไข</a>
+                            <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยืนยันลบ?');">🗑️</a>
+                        {% else %}
+                            {% if repair['status'] == 'Pending' %}
+                                <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยกเลิก?');">ยกเลิก</a>
+                            {% else %}
+                                <span style="color: #b2bec3; font-size: 12px;">กำลังซ่อม...</span>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="text-align: center; color: #b2bec3; padding: 40px;">ไม่มีงานค้างในระบบ ✅</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <h2 style="color: #00b894; margin-top: 50px;">✅ ประวัติการซ่อมเสร็จสิ้น</h2>
+    <table>
+        <thead>
+            <tr>
+                <th width="12%">📅 วันที่</th>
+                <th width="15%">🖥️ อุปกรณ์</th>
+                <th width="25%">🛠️ การแก้ไข</th>
+                <th width="15%">💰 ราคารวม</th>
+                <th width="10%">💡สถานะ</th>
+                <th>⭐ ประเมิน</th>
+                <th>⚙️จัดการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for repair in completed_repairs %}
+            <tr>
+                <td class="col-date">{{ repair['report_date'] }}</td>
+                <td><span class="col-device">{{ repair['device_name'] }}</span></td>
+                <td>
+                    <div style="font-weight: 500; color: #00b894;">✔ {{ repair['technician_note'] or '-' }}</div>
+                    <small style="color: #b2bec3;">(อาการเดิม: {{ repair['problem_detail'] }})</small>
+                </td>
+                <td>
+                    {% if repair['cost'] and repair['cost'] > 0 %}
+                        <div class="cost-display">฿{{ "{:,.0f}".format(repair['cost']) }}</div>
+                        {% if repair['spare_parts'] %}
+                            <div style="font-size: 11px; color: #b2bec3; margin-top: 4px;">{{ repair['spare_parts'] }}</div>
+                        {% endif %}
+                    {% else %}
+                        <span style="color: #b2bec3;">ฟรี</span>
+                    {% endif %}
+                </td>
+                <td><span class="badge status-Completed">Completed</span></td>
+                <td>
+                    {% if repair['rating'] %}
+                        <div style="color: #fdcb6e; letter-spacing: 2px;">
+                            {{ '★' * repair['rating'] }}
+                        </div>
+                    {% else %}
+                        {% if role == 'user' %}
+                            <a href="{{ url_for('evaluate', repair_id=repair['repair_id']) }}" class="btn btn-rate">⭐ ให้ดาว</a>
+                        {% else %}
+                            <span style="color: #b2bec3; font-size: 12px;">⌛รอประเมิน</span>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if role == 'admin' %}
+                        <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ลบประวัติ?');" style="padding: 5px 10px;">🗑️</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="7" style="text-align: center; color: #b2bec3; padding: 40px;">ยังไม่มีประวัติการซ่อม</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
