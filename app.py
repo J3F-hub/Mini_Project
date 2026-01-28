@@ -2,19 +2,22 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 
 app = Flask(__name__)
-app.secret_key = 'my_secret_key'
+app.secret_key = 'it_helpdesk_secret_key'
 
+# ฟังก์ชันเชื่อมต่อฐานข้อมูล
 def get_db_connection():
     conn = sqlite3.connect('maintenance.db')
     conn.row_factory = sqlite3.Row
     return conn
 
+# หน้าแรก (ถ้าล็อกอินแล้วไป Dashboard ถ้ายังให้ไป Login)
 @app.route('/')
 def home():
     if 'user_id' in session:
         return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
 
+# ระบบ Login
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -23,21 +26,25 @@ def login():
         conn = get_db_connection()
         user = conn.execute('SELECT * FROM users WHERE username = ?', (username,)).fetchone()
         conn.close()
+        
         if user and user['password'] == password:
             session['user_id'] = user['user_id']
             session['fullname'] = user['fullname']
             session['role'] = user['role']
             return redirect(url_for('dashboard'))
         else:
-            return "รหัสผ่านผิด! <a href='/login'>ลองใหม่</a>"
+            return render_template('login.html', error="รหัสผ่านผิด กรุณาลองใหม่")
     return render_template('login.html')
 
+# หน้า Dashboard (หน้ารวมงานซ่อม)
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     conn = get_db_connection()
+    
+    # ถ้าเป็น Admin ให้เห็นงานทั้งหมด
     if session['role'] == 'admin':
         all_repairs = conn.execute('''
             SELECT r.*, u.fullname, e.rating, e.comment
@@ -46,6 +53,7 @@ def dashboard():
             LEFT JOIN evaluations e ON r.repair_id = e.repair_id
             ORDER BY r.report_date DESC
         ''').fetchall()
+    # ถ้าเป็น User ธรรมดา ให้เห็นแค่ของตัวเอง
     else:
         all_repairs = conn.execute('''
             SELECT r.*, e.rating, e.comment
@@ -56,6 +64,7 @@ def dashboard():
         ''', (session['user_id'],)).fetchall()
     conn.close()
 
+    # แยกงานที่เสร็จแล้ว กับยังไม่เสร็จ
     active_repairs = []
     completed_repairs = []
     for repair in all_repairs:
@@ -64,12 +73,14 @@ def dashboard():
         else:
             active_repairs.append(repair)
     
-    return render_template('homepage.html', 
+    # ส่งข้อมูลไปที่ index.html (ย้ำว่า index.html)
+    return render_template('index.html', 
                            name=session['fullname'], 
                            role=session['role'], 
                            active_repairs=active_repairs, 
                            completed_repairs=completed_repairs)
 
+# แจ้งซ่อม
 @app.route('/report', methods=['GET', 'POST'])
 def report():
     if 'user_id' not in session:
@@ -86,60 +97,74 @@ def report():
         return redirect(url_for('dashboard'))
     return render_template('report.html')
 
+# อัปเดตงานซ่อม (สำหรับ Admin)
 @app.route('/update/<int:repair_id>', methods=['GET', 'POST'])
 def update_repair(repair_id):
     if session.get('role') != 'admin':
         return redirect(url_for('login'))
+    
     conn = get_db_connection()
     if request.method == 'POST':
         status = request.form['status']
         technician_note = request.form['technician_note']
         spare_parts = request.form.get('spare_parts', '')
         cost = request.form.get('cost', 0)
-        if cost == '': cost = 0
+        
+        if not cost: cost = 0 # กันค่าว่าง
 
         conn.execute('''UPDATE repairs SET status=?, technician_note=?, spare_parts=?, cost=? WHERE repair_id=?''',
                      (status, technician_note, spare_parts, cost, repair_id))
         conn.commit()
         conn.close()
         return redirect(url_for('dashboard'))
+    
     repair = conn.execute('SELECT * FROM repairs WHERE repair_id = ?', (repair_id,)).fetchone()
     conn.close()
     return render_template('update_repair.html', repair=repair)
 
+# ประเมินความพึงพอใจ
 @app.route('/evaluate/<int:repair_id>', methods=['GET', 'POST'])
 def evaluate(repair_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    
     conn = get_db_connection()
     if request.method == 'POST':
         rating = request.form['rating']
         comment = request.form['comment']
-        conn.execute('INSERT INTO evaluations (repair_id, rating, comment) VALUES (?, ?, ?)', (repair_id, rating, comment))
+        conn.execute('INSERT INTO evaluations (repair_id, rating, comment) VALUES (?, ?, ?)', 
+                     (repair_id, rating, comment))
         conn.commit()
         conn.close()
         return redirect(url_for('dashboard'))
+    
     repair = conn.execute('SELECT * FROM repairs WHERE repair_id = ?', (repair_id,)).fetchone()
     conn.close()
     return render_template('evaluate.html', repair=repair)
 
+# ลบรายการ
 @app.route('/delete/<int:repair_id>')
 def delete_repair(repair_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    
     conn = get_db_connection()
+    # Admin ลบได้หมด User ลบได้แค่ตอน Pending
     if session['role'] == 'admin':
         conn.execute('DELETE FROM evaluations WHERE repair_id = ?', (repair_id,))
         conn.execute('DELETE FROM repairs WHERE repair_id = ?', (repair_id,))
         conn.commit()
     else:
-        check = conn.execute('SELECT * FROM repairs WHERE repair_id = ? AND user_id = ?', (repair_id, session['user_id'])).fetchone()
+        check = conn.execute('SELECT * FROM repairs WHERE repair_id = ? AND user_id = ?', 
+                             (repair_id, session['user_id'])).fetchone()
         if check and check['status'] == 'Pending':
             conn.execute('DELETE FROM repairs WHERE repair_id = ?', (repair_id,))
             conn.commit()
+            
     conn.close()
     return redirect(url_for('dashboard'))
 
+# ออกจากระบบ
 @app.route('/logout')
 def logout():
     session.clear()

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Helpdesk Dashboard</title>
+    <title>Dashboard - IT Helpdesk</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -13,7 +13,7 @@
     <header>
         <div>
             <h1>💻 ระบบแจ้งซ่อม IT Helpdesk</h1>
-            <span style="color: #b2bec3; font-size: 14px;">วิทยาลัยเทคนิค... (แผนกเทคโนโลยีคอมพิวเตอร์)</span>
+            <span style="color: #b2bec3; font-size: 14px;">แผนกเทคโนโลยีคอมพิวเตอร์</span>
         </div>
         <div style="text-align: right;">
             <div class="user-badge">
@@ -50,9 +50,7 @@
                 <td class="col-problem">{{ repair['problem_detail'] }}</td>
                 <td class="col-location">{{ repair['location'] }}</td>
                 {% if role == 'admin' %} 
-                    <td class="col-user">
-                         {{ repair['fullname'] }}
-                    </td> 
+                    <td class="col-user">{{ repair['fullname'] }}</td> 
                 {% endif %}
                 <td><span class="badge status-{{ repair['status'].split(' ')[0] }}">{{ repair['status'] }}</span></td>
                 <td>
@@ -61,11 +59,7 @@
                             <a href="{{ url_for('update_repair', repair_id=repair['repair_id']) }}" class="btn btn-update">✏️แก้ไข</a>
                             <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยืนยันลบ?');">🗑️</a>
                         {% else %}
-                            {% if repair['status'] == 'Pending' %}
-                                <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยกเลิก?');">ยกเลิก</a>
-                            {% else %}
-                                <span style="color: #b2bec3; font-size: 12px;">กำลังซ่อม...</span>
-                            {% endif %}
+                            <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยกเลิก?');">ยกเลิก</a>
                         {% endif %}
                     </div>
                 </td>
@@ -111,9 +105,7 @@
                 <td><span class="badge status-Completed">Completed</span></td>
                 <td>
                     {% if repair['rating'] %}
-                        <div style="color: #fdcb6e; letter-spacing: 2px;">
-                            {{ '★' * repair['rating'] }}
-                        </div>
+                        <div style="color: #fdcb6e; letter-spacing: 2px;">{{ '★' * repair['rating'] }}</div>
                     {% else %}
                         {% if role == 'user' %}
                             <a href="{{ url_for('evaluate', repair_id=repair['repair_id']) }}" class="btn btn-rate">⭐ ให้ดาว</a>
@@ -124,7 +116,7 @@
                 </td>
                 <td>
                     {% if role == 'admin' %}
-                        <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ลบประวัติ?');" style="padding: 5px 10px;">🗑️</a>
+                        <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ลบประวัติ?');">🗑️</a>
                     {% endif %}
                 </td>
             </tr>
