@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - IT Helpdesk</title>
+    <title>IT Helpdesk Dashboard</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
@@ -17,9 +17,9 @@
         </div>
         <div style="text-align: right;">
             <div class="user-badge">
-                👤 {{ name }} <span style="color: #0984e3;">({{ role }})</span>
+                👤 {{ name }} <span style="color: #54a0ff;">({{ role }})</span>
             </div>
-            <a href="{{ url_for('logout') }}" style="color: #ff7675; text-decoration: none; font-size: 13px; margin-top: 8px; display: inline-block;">ออกจากระบบ ➜</a>
+            <a href="{{ url_for('logout') }}" style="color: #ff6b6b; text-decoration: none; font-size: 13px; margin-top: 8px; display: inline-block;">ออกจากระบบ ➜</a>
         </div>
     </header>
 
@@ -45,21 +45,25 @@
         <tbody>
             {% for repair in active_repairs %}
             <tr>
-                <td class="col-date">{{ repair['report_date'] }}</td>
-                <td><span class="col-device">{{ repair['device_name'] }}</span></td>
-                <td class="col-problem">{{ repair['problem_detail'] }}</td>
-                <td class="col-location">{{ repair['location'] }}</td>
+                <td data-label="📅 วันที่" class="col-date">{{ repair['report_date'] }}</td>
+                <td data-label="🖥️ อุปกรณ์"><span class="col-device">{{ repair['device_name'] }}</span></td>
+                <td data-label="⚠️ อาการ" class="col-problem">{{ repair['problem_detail'] }}</td>
+                <td data-label="📍 สถานที่" class="col-location">{{ repair['location'] }}</td>
                 {% if role == 'admin' %} 
-                    <td class="col-user">{{ repair['fullname'] }}</td> 
+                    <td data-label="👤 ผู้แจ้ง" class="col-user">{{ repair['fullname'] }}</td> 
                 {% endif %}
-                <td><span class="badge status-{{ repair['status'].split(' ')[0] }}">{{ repair['status'] }}</span></td>
-                <td>
+                <td data-label="💡สถานะ"><span class="badge status-{{ repair['status'].split(' ')[0] }}">{{ repair['status'] }}</span></td>
+                <td data-label="⚙️จัดการ">
                     <div class="action-group">
                         {% if role == 'admin' %}
                             <a href="{{ url_for('update_repair', repair_id=repair['repair_id']) }}" class="btn btn-update">✏️แก้ไข</a>
                             <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยืนยันลบ?');">🗑️</a>
                         {% else %}
-                            <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยกเลิก?');">ยกเลิก</a>
+                             {% if repair['status'] == 'Pending' %}
+                                <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยกเลิก?');">ยกเลิก</a>
+                             {% else %}
+                                <span style="color: #7f8c8d; font-size: 12px;">กำลังซ่อม...</span>
+                             {% endif %}
                         {% endif %}
                     </div>
                 </td>
@@ -70,7 +74,7 @@
         </tbody>
     </table>
 
-    <h2 style="color: #00b894; margin-top: 50px;">✅ ประวัติการซ่อมเสร็จสิ้น</h2>
+    <h2 style="color: #1dd1a1; margin-top: 50px;">✅ ประวัติการซ่อมเสร็จสิ้น</h2>
     <table>
         <thead>
             <tr>
@@ -86,26 +90,29 @@
         <tbody>
             {% for repair in completed_repairs %}
             <tr>
-                <td class="col-date">{{ repair['report_date'] }}</td>
-                <td><span class="col-device">{{ repair['device_name'] }}</span></td>
-                <td>
-                    <div style="font-weight: 500; color: #00b894;">✔ {{ repair['technician_note'] or '-' }}</div>
+                <td data-label="📅 วันที่" class="col-date">{{ repair['report_date'] }}</td>
+                <td data-label="🖥️ อุปกรณ์"><span class="col-device">{{ repair['device_name'] }}</span></td>
+                <td data-label="🛠️ การแก้ไข">
+                    <div style="font-weight: 500; color: #1dd1a1;">✔ {{ repair['technician_note'] or '-' }}</div>
                     <small style="color: #b2bec3;">(อาการเดิม: {{ repair['problem_detail'] }})</small>
                 </td>
-                <td>
+                <td data-label="💰 ราคารวม">
                     {% if repair['cost'] and repair['cost'] > 0 %}
-                        <div class="cost-display">฿{{ "{:,.0f}".format(repair['cost']) }}</div>
-                        {% if repair['spare_parts'] %}
-                            <div style="font-size: 11px; color: #b2bec3; margin-top: 4px;">{{ repair['spare_parts'] }}</div>
-                        {% endif %}
+                        <div style="color: #ff9ff3; font-weight: bold;">฿{{ "{:,.0f}".format(repair['cost']) }}</div>
                     {% else %}
                         <span style="color: #b2bec3;">ฟรี</span>
                     {% endif %}
                 </td>
-                <td><span class="badge status-Completed">Completed</span></td>
-                <td>
+                <td data-label="💡สถานะ"><span class="badge status-Completed">Completed</span></td>
+                
+                <td data-label="⭐ ประเมิน">
                     {% if repair['rating'] %}
-                        <div style="color: #fdcb6e; letter-spacing: 2px;">{{ '★' * repair['rating'] }}</div>
+                        <div style="color: #feca57; letter-spacing: 2px;">{{ '★' * repair['rating'] }}</div>
+                        {% if repair['comment'] %}
+                            <div style="font-size: 12px; color: #dfe6e9; margin-top: 5px; font-style: italic;">
+                                "{{ repair['comment'] }}"
+                            </div>
+                        {% endif %}
                     {% else %}
                         {% if role == 'user' %}
                             <a href="{{ url_for('evaluate', repair_id=repair['repair_id']) }}" class="btn btn-rate">⭐ ให้ดาว</a>
@@ -114,7 +121,8 @@
                         {% endif %}
                     {% endif %}
                 </td>
-                <td>
+
+                <td data-label="⚙️จัดการ">
                     {% if role == 'admin' %}
                         <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ลบประวัติ?');">🗑️</a>
                     {% endif %}
