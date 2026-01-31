@@ -2,12 +2,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary-blue: #0984e3;      /* ฟ้าเข้ม */
-    --light-blue: #74b9ff;        /* ฟ้าอ่อน */
-    --teal: #00cec9;              /* เขียวน้ำทะเล */
-    --bg-color: #dfe6e9;          /* สีพื้นหลังเทาอมฟ้า */
-    --text-color: #2d3436;
+    --primary-blue: #54a0ff;      /* ฟ้าสว่างขึ้นสำหรับพื้นดำ */
+    --light-blue: #2e86de;        /* ฟ้าเข้ม */
+    --teal: #00d2d3;              /* เขียวน้ำทะเลสว่าง */
+    --bg-color: #1e272e;          /* พื้นหลังดำ */
+    --text-color: #dfe6e9;        /* ตัวหนังสือขาว */
     --border-radius: 15px;
+    --card-bg: rgba(30, 39, 46, 0.95); /* สีพื้นการ์ด/กล่อง แบบดำโปร่งแสง */
+    --input-bg: #2f3640;          /* สีช่องกรอกข้อมูล */
+    --border-color: rgba(255,255,255,0.1); /* สีเส้นขอบจางๆ */
 }
 
 body {
@@ -17,15 +20,15 @@ body {
     padding: 40px 20px;
     min-height: 100vh;
     
-    /* --- พื้นหลังลายเรขาคณิต (Geometric Pattern) --- */
-    background-color: #eef2f3;
+    /* --- พื้นหลังลายเรขาคณิต (เปลี่ยนเป็นโทนดำ-เทา) --- */
+    background-color: #1e272e;
     background-image: 
-        linear-gradient(30deg, #e0e6eb 12%, transparent 12.5%, transparent 87%, #e0e6eb 87.5%, #e0e6eb),
-        linear-gradient(150deg, #e0e6eb 12%, transparent 12.5%, transparent 87%, #e0e6eb 87.5%, #e0e6eb),
-        linear-gradient(30deg, #e0e6eb 12%, transparent 12.5%, transparent 87%, #e0e6eb 87.5%, #e0e6eb),
-        linear-gradient(150deg, #e0e6eb 12%, transparent 12.5%, transparent 87%, #e0e6eb 87.5%, #e0e6eb),
-        linear-gradient(60deg, #d8e0e5 25%, transparent 25.5%, transparent 75%, #d8e0e5 75%, #d8e0e5),
-        linear-gradient(60deg, #d8e0e5 25%, transparent 25.5%, transparent 75%, #d8e0e5 75%, #d8e0e5);
+        linear-gradient(30deg, #2f3640 12%, transparent 12.5%, transparent 87%, #2f3640 87.5%, #2f3640),
+        linear-gradient(150deg, #2f3640 12%, transparent 12.5%, transparent 87%, #2f3640 87.5%, #2f3640),
+        linear-gradient(30deg, #2f3640 12%, transparent 12.5%, transparent 87%, #2f3640 87.5%, #2f3640),
+        linear-gradient(150deg, #2f3640 12%, transparent 12.5%, transparent 87%, #2f3640 87.5%, #2f3640),
+        linear-gradient(60deg, #353b48 25%, transparent 25.5%, transparent 75%, #353b48 75%, #353b48),
+        linear-gradient(60deg, #353b48 25%, transparent 25.5%, transparent 75%, #353b48 75%, #353b48);
     background-size: 60px 100px;
     background-position: 0 0, 0 0, 30px 50px, 30px 50px, 0 0, 30px 50px;
     
@@ -36,11 +39,12 @@ body {
 .container {
     width: 100%;
     max-width: 1200px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--card-bg); /* เปลี่ยนเป็นสีดำโปร่งแสง */
     padding: 40px;
     border-radius: 25px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5); /* เงาเข้มขึ้น */
     backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color); /* เพิ่มขอบบางๆ ให้เห็นชัดในพื้นดำ */
 }
 
 /* Header */
@@ -49,11 +53,11 @@ header {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 20px;
-    border-bottom: 3px solid #f1f2f6;
+    border-bottom: 3px solid var(--border-color); /* เส้นคั่นสีจาง */
     margin-bottom: 30px;
 }
 h1 { color: var(--primary-blue); margin: 0; display: flex; align-items: center; font-size: 24px;}
-.user-badge { background: #f1f2f6; padding: 8px 15px; border-radius: 30px; font-size: 14px; color: #636e72; font-weight: 600;}
+.user-badge { background: #2f3640; padding: 8px 15px; border-radius: 30px; font-size: 14px; color: #b2bec3; font-weight: 600; border: 1px solid var(--border-color);}
 
 /* Headings */
 h2 {
@@ -84,14 +88,15 @@ th {
 }
 
 tbody tr {
-    background-color: white;
-    box-shadow: 0 5px 15px rgba(189, 71, 71, 0.05);
+    background-color: rgba(255,255,255,0.05); /* เปลี่ยนพื้นหลังแถวเป็นสีจางๆ แทนสีขาว */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
     transition: transform 0.2s;
 }
 
 tbody tr:hover {
     transform: scale(1.01);
-    box-shadow: 0 10px 25px rgba(9, 132, 227, 0.15);
+    background-color: rgba(255,255,255,0.1);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
 }
 
 td {
@@ -99,24 +104,25 @@ td {
     vertical-align: middle;
     border: none;
     font-size: 15px;
+    color: white; /* บังคับตัวหนังสือขาว */
 }
 
 td:first-child { border-top-left-radius: var(--border-radius); border-bottom-left-radius: var(--border-radius); }
 td:last-child { border-top-right-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
 
 /* Data Styling */
-.col-date { font-size: 13px; color: #636e72; white-space: nowrap; }
-.col-device { font-weight: 700; color: var(--primary-blue); font-size: 16px; background: #f0f9ff; padding: 5px 10px; border-radius: 8px; display: inline-block;}
-.col-problem { color: #2d3436; line-height: 1.4; }
+.col-date { font-size: 13px; color: #b2bec3; white-space: nowrap; }
+.col-device { font-weight: 700; color: var(--primary-blue); font-size: 16px; background: rgba(84, 160, 255, 0.1); padding: 5px 10px; border-radius: 8px; display: inline-block;}
+.col-problem { color: #dfe6e9; line-height: 1.4; }
 .col-location { font-weight: 600; color: var(--teal); }
-.col-user { font-size: 14px; font-weight: 500; color: #636e72; display: flex; align-items: center;}
+.col-user { font-size: 14px; font-weight: 500; color: #b2bec3; display: flex; align-items: center;}
 .col-user span { margin-left: 5px; }
 
 /* Status Badges */
 .badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; display: inline-block; text-align: center; min-width: 80px;}
-.status-Pending { background: #ffeaa7; color: #d35400; }
-.status-In { background: #74b9ff; color: #fff; }
-.status-Completed { background: #55efc4; color: #00b894; }
+.status-Pending { background: #e17055; color: white; }
+.status-In { background: #0984e3; color: #fff; }
+.status-Completed { background: #00b894; color: white; }
 
 /* Buttons */
 .action-group { display: flex; gap: 8px; }
@@ -132,18 +138,18 @@ td:last-child { border-top-right-radius: var(--border-radius); border-bottom-rig
     border: none;
     cursor: pointer;
 }
-.btn:hover { transform: translateY(-2px); filter: brightness(1.1); }
+.btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
 
 .btn-add { background: linear-gradient(45deg, #00b894, #00cec9); color: white; padding: 12px 25px; font-size: 16px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);}
-.btn-update { background: #dfe6e9; color: #2d3436; }
+.btn-update { background: #636e72; color: white; } /* ปุ่มแก้ไขสีเข้มขึ้น */
 .btn-update:hover { background: var(--primary-blue); color: white; }
 .btn-delete { background: #ff7675; color: white; }
 .btn-rate { background: #fdcb6e; color: #2d3436; }
 
-.cost-display { background: #f1f2f6; padding: 8px 15px; border-radius: 10px; font-weight: bold; color: #e84393; display: inline-block;}
+.cost-display { background: #2d3436; padding: 8px 15px; border-radius: 10px; font-weight: bold; color: #ff7675; display: inline-block; border: 1px solid var(--border-color);}
 
 /* =========================================================
-   ตกแต่งหน้า Login (ให้เข้ากับธีมสว่าง)
+   ตกแต่งหน้า Login (Dark Mode)
    ========================================================= */
 
 .auth-wrapper {
@@ -155,11 +161,11 @@ td:last-child { border-top-right-radius: var(--border-radius); border-bottom-rig
 }
 
 .auth-box {
-    background: rgba(255, 255, 255, 0.95); /* สีขาวโปร่งแสง */
+    background: var(--card-bg); /* ดำโปร่งแสง */
     padding: 40px;
     border-radius: 25px;
-    border: 2px solid white; /* ขอบขาวหนานิดนึงให้ดูนุ่ม */
-    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     backdrop-filter: blur(10px);
     width: 100%;
     max-width: 400px;
@@ -172,7 +178,7 @@ td:last-child { border-top-right-radius: var(--border-radius); border-bottom-rig
     margin-bottom: 5px;
 }
 .auth-header p {
-    color: #636e72;
+    color: #b2bec3;
     font-size: 14px;
     margin-top: 0;
     margin-bottom: 30px;
@@ -194,18 +200,18 @@ td:last-child { border-top-right-radius: var(--border-radius); border-bottom-rig
     width: 100%;
     padding: 12px 15px;
     border-radius: 10px;
-    border: 1px solid #dfe6e9;
-    background-color: #f8f9fa;
-    color: var(--text-color);
+    border: 1px solid #4b6584; /* ขอบสีเทาเข้ม */
+    background-color: var(--input-bg); /* พื้นหลังช่องกรอกสีดำ */
+    color: white; /* ตัวหนังสือขาว */
     font-size: 14px;
     box-sizing: border-box;
     transition: 0.2s;
 }
 .input-group input:focus {
     border-color: var(--primary-blue);
-    background-color: #fff;
+    background-color: #353b48;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(9, 132, 227, 0.2);
+    box-shadow: 0 0 0 3px rgba(84, 160, 255, 0.2);
 }
 
 /* ปุ่ม Login */

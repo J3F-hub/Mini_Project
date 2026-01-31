@@ -6,233 +6,161 @@
     <title>อัปเดตงานซ่อม - IT Helpdesk</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    
     <style>
-        /* --- CSS เฉพาะหน้านี้ (เพื่อให้สวยทันทีโดยไม่ต้องแก้ style.css หลัก) --- */
-        :root {
-            --bg-primary: #1e272e;   /* สีพื้นหลังหลัก (Dark Blue/Grey) */
-            --bg-secondary: #2d3436; /* สีพื้นหลังกล่อง */
-            --text-primary: #dfe6e9; /* สีตัวหนังสือหลัก (ขาวนวล) */
-            --text-muted: #b2bec3;   /* สีตัวหนังสือรอง (เทา) */
-            --accent-color: #0984e3; /* สีหลัก (น้ำเงินฟ้า) */
-            --danger-color: #ff7675; /* สีแจ้งเตือน/ราคา (แดงอ่อน) */
-            --success-color: #00b894; /* สีสำเร็จ (เขียว) */
-        }
-
+        /* Override เป็น Dark Mode เฉพาะหน้านี้ */
         body {
-            font-family: 'Prompt', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            margin: 0;
-            padding: 20px;
+            background-color: #1e272e; /* พื้นหลังดำ */
+            color: #dfe6e9; /* ตัวหนังสือขาว */
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
         }
 
-        .update-container {
-            background-color: var(--bg-secondary);
+        .update-box {
+            background: rgba(30, 39, 46, 0.95); /* กล่องดำโปร่งแสง */
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
             width: 100%;
-            max-width: 600px; /* ความกว้างสูงสุดของฟอร์ม */
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-width: 500px;
+            backdrop-filter: blur(10px);
         }
 
-        h2 {
+        h1 {
+            color: #00d2d3; /* หัวข้อสีฟ้าสดใส */
             text-align: center;
             margin-bottom: 30px;
-            font-weight: 600;
-            color: var(--accent-color);
-            letter-spacing: 1px;
-        }
-        h2 i { margin-right: 10px; }
-
-        .form-group {
-            margin-bottom: 25px;
+            font-size: 24px;
         }
 
         label {
-            display: block;
-            margin-bottom: 8px;
             font-weight: 500;
-            color: var(--text-muted);
-            font-size: 15px;
+            color: #b2bec3;
+            margin-top: 15px;
+            display: block;
+            margin-bottom: 5px;
         }
 
-        /* สไตล์ช่องกรอกข้อมูล */
-        .form-control {
+        /* กล่อง Input สไตล์มืด */
+        input, textarea, select {
             width: 100%;
-            padding: 12px 15px;
-            background-color: #13171a; /* พื้นหลัง Input มืดกว่ากล่องนิดหน่อย */
-            border: 2px solid #1e272e;
+            padding: 12px;
             border-radius: 10px;
-            color: var(--text-primary);
+            border: 2px solid #2d3436;
+            background-color: #2d3436;
+            color: white;
             font-family: 'Prompt', sans-serif;
-            font-size: 15px;
+            font-size: 14px;
             box-sizing: border-box;
-            transition: all 0.3s ease;
+            transition: 0.3s;
         }
 
-        .form-control:focus {
+        input:focus, textarea:focus, select:focus {
             outline: none;
-            border-color: var(--accent-color);
-            background-color: #1a1f24;
-            box-shadow: 0 0 0 4px rgba(9, 132, 227, 0.1);
+            border-color: #0984e3;
+            background-color: #353b48;
         }
 
-        /* สไตล์ช่องที่ห้ามแก้ไข (Readonly) */
-        .form-control.readonly {
+        /* ช่องอ่านอย่างเดียว */
+        .readonly {
             background-color: #181b1e;
             border-color: #181b1e;
             color: #636e72;
             cursor: not-allowed;
-            font-size: 14px;
         }
 
-        /* --- โซนสรุปค่าใช้จ่าย (Cost Section) --- */
+        /* โซนราคา (Cost Section) */
         .cost-section {
-            background: rgba(9, 132, 227, 0.08); /* พื้นหลังสีน้ำเงินจางๆ */
-            padding: 25px;
+            background: rgba(9, 132, 227, 0.1); /* พื้นหลังน้ำเงินจางๆ */
+            padding: 20px;
             border-radius: 15px;
-            margin-top: 35px;
-            border: 1px dashed var(--accent-color);
-            position: relative;
+            margin-top: 25px;
+            border: 1px dashed #0984e3;
         }
 
-        .cost-title {
+        .cost-label {
+            color: #74b9ff;
             font-size: 18px;
             font-weight: 600;
-            color: var(--accent-color);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-        }
-        .cost-title span { margin-left: 8px; }
-
-        .price-input-group {
-            position: relative;
-        }
-        .price-currency {
-            position: absolute;
-            right: 15px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-weight: bold;
-        }
-        .form-control.price-input {
-            font-size: 22px;
-            font-weight: 700;
-            color: var(--danger-color); /* ราคาสีแดงเด่นๆ */
-            padding-right: 50px;
-            text-align: right;
-            background-color: rgba(0, 0, 0, 0.2);
+            gap: 10px;
         }
 
         /* ปุ่มกด */
-        .btn-submit {
+        .btn-save {
+            margin-top: 30px;
+            padding: 12px;
             width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, var(--accent-color), #00a8ff);
-            color: white;
+            background: linear-gradient(45deg, #00b894, #00cec9);
             border: none;
             border-radius: 50px;
-            font-size: 18px;
-            font-weight: 600;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 20px -10px rgba(9, 132, 227, 0.5);
-            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);
+            transition: transform 0.2s;
         }
-
-        .btn-submit:hover {
+        .btn-save:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 25px -10px rgba(9, 132, 227, 0.7);
             filter: brightness(1.1);
         }
 
-        .btn-cancel {
+        .back-link {
             display: block;
             text-align: center;
             margin-top: 20px;
-            color: var(--text-muted);
+            color: #ff7675;
             text-decoration: none;
-            font-size: 15px;
-            transition: 0.3s;
+            font-size: 14px;
+            transition: 0.2s;
         }
-        .btn-cancel:hover {
-            color: var(--danger-color);
-        }
+        .back-link:hover { color: #d63031; }
 
-        /* เส้นคั่น */
-        hr.divider {
-            border: 0;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.1);
-            margin: 30px 0;
-        }
     </style>
 </head>
 <body>
 
-    <div class="update-container">
-        <h2>🛠️ อัปเดตสถานะงานซ่อม</h2>
+    <div class="update-box">
+        <h1>🛠 อัปเดตงานซ่อม</h1>
         
         <form method="POST">
-            <div class="form-group">
-                <label>🖥️ อุปกรณ์ที่แจ้ง (Device)</label>
-                <input type="text" value="{{ repair['device_name'] }}" class="form-control readonly" readonly>
-            </div>
+            <label>🖥️ อุปกรณ์ (Device)</label>
+            <input type="text" value="{{ repair['device_name'] }}" class="readonly" readonly>
 
-            <div class="form-group">
-                <label>⚠️ อาการที่พบ (Problem Detail)</label>
-                <textarea rows="3" class="form-control readonly" readonly>{{ repair['problem_detail'] }}</textarea>
-            </div>
+            <label>⚠️ อาการเสีย (Problem)</label>
+            <textarea rows="2" class="readonly" readonly>{{ repair['problem_detail'] }}</textarea>
 
-            <hr class="divider">
+            <div style="margin: 20px 0; border-top: 1px solid rgba(255,255,255,0.1);"></div>
 
-            <div class="form-group">
-                <label for="status">💡 สถานะการซ่อม (Status)</label>
-                <select name="status" id="status" class="form-control" style="cursor: pointer;">
-                    <option value="Pending" {% if repair['status'] == 'Pending' %}selected{% endif %}>🔴 รอดำเนินการ (Pending)</option>
-                    <option value="In Progress" {% if repair['status'] == 'In Progress' %}selected{% endif %}>🔵 กำลังซ่อม (In Progress)</option>
-                    <option value="Completed" {% if repair['status'] == 'Completed' %}selected{% endif %}>🟢 ซ่อมเสร็จแล้ว (Completed)</option>
-                </select>
-            </div>
+            <label>💡 สถานะล่าสุด (Status)</label>
+            <select name="status">
+                <option value="Pending" {% if repair['status'] == 'Pending' %}selected{% endif %}>🔴 รอดำเนินการ (Pending)</option>
+                <option value="In Progress" {% if repair['status'] == 'In Progress' %}selected{% endif %}>🔵 กำลังซ่อม (In Progress)</option>
+                <option value="Completed" {% if repair['status'] == 'Completed' %}selected{% endif %}>🟢 ซ่อมเสร็จแล้ว (Completed)</option>
+            </select>
 
-            <div class="form-group">
-                <label for="technician_note">🔧 วิธีการแก้ไข/หมายเหตุช่าง (Technician Note)</label>
-                <textarea name="technician_note" id="technician_note" rows="4" class="form-control" placeholder="ระบุสิ่งที่ได้ดำเนินการไป...">{{ repair['technician_note'] or '' }}</textarea>
-            </div>
+            <label>🔧 วิธีแก้ไข (Technician Note)</label>
+            <textarea name="technician_note" rows="3" placeholder="ระบุสิ่งที่ทำไป...">{{ repair['technician_note'] or '' }}</textarea>
 
             <div class="cost-section">
-                <div class="cost-title">
-                    💰 <span>สรุปค่าใช้จ่าย (Cost Summary)</span>
-                </div>
+                <div class="cost-label">💰 สรุปค่าใช้จ่าย</div>
                 
-                <div class="form-group">
-                    <label for="spare_parts">📝 รายละเอียดอะไหล่/ค่าบริการ (Details)</label>
-                    <textarea name="spare_parts" id="spare_parts" rows="2" class="form-control" placeholder="เช่น ค่า SSD 500 บาท, ค่าแรง 300 บาท..." style="background-color: rgba(0,0,0,0.2);">{{ repair['spare_parts'] or '' }}</textarea>
-                </div>
+                <label style="color: #dfe6e9;">📝 รายละเอียดอะไหล่:</label>
+                <textarea name="spare_parts" rows="2" placeholder="เช่น ค่า SSD 500, ค่าแรง 200..." style="background: rgba(0,0,0,0.2);">{{ repair['spare_parts'] or '' }}</textarea>
 
-                <div class="form-group" style="margin-bottom: 0;">
-                    <label for="cost" style="color: var(--danger-color);">💵 ราคารวมสุทธิ (Total Price)</label>
-                    <div class="price-input-group">
-                        <input type="number" name="cost" id="cost" class="form-control price-input" placeholder="0" value="{{ repair['cost'] or 0 }}" min="0">
-                        <span class="price-currency">บาท</span>
-                    </div>
-                </div>
+                <label style="color: #ff7675; margin-top: 15px;">💵 ราคารวมสุทธิ (บาท):</label>
+                <input type="number" name="cost" placeholder="0" value="{{ repair['cost'] or 0 }}" style="font-size: 20px; font-weight: bold; color: #ff7675; background: rgba(0,0,0,0.2);">
             </div>
 
-            <button type="submit" class="btn-submit">💾 บันทึกข้อมูล (Save)</button>
+            <button type="submit" class="btn-save">💾 บันทึกข้อมูล</button>
         </form>
 
-        <a href="{{ url_for('dashboard') }}" class="btn-cancel">
-            <span style="margin-right: 5px;">❌</span> ยกเลิก / กลับหน้าหลัก
-        </a>
+        <a href="{{ url_for('dashboard') }}" class="back-link">❌ ยกเลิก / กลับหน้าหลัก</a>
     </div>
 
 </body>
