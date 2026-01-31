@@ -4,13 +4,12 @@ import sqlite3
 app = Flask(__name__)
 app.secret_key = 'it_helpdesk_secret_key'
 
-# ฟังก์ชันเชื่อมต่อฐานข้อมูล
 def get_db_connection():
     conn = sqlite3.connect('maintenance.db')
     conn.row_factory = sqlite3.Row
     return conn
 
-# หน้าแรก (ถ้าล็อกอินแล้วไป Dashboard ถ้ายังให้ไป Login)
+# หน้าแรก
 @app.route('/')
 def home():
     if 'user_id' in session:
@@ -36,15 +35,13 @@ def login():
             return render_template('login.html', error="รหัสผ่านผิด กรุณาลองใหม่")
     return render_template('login.html')
 
-# หน้า Dashboard (หน้ารวมงานซ่อม)
+# หน้า Dashboard (ใช้ homepage.html ตามที่คุณต้องการ)
 @app.route('/dashboard')
 def dashboard():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    
-    # ถ้าเป็น Admin ให้เห็นงานทั้งหมด
     if session['role'] == 'admin':
         all_repairs = conn.execute('''
             SELECT r.*, u.fullname, e.rating, e.comment
@@ -53,7 +50,6 @@ def dashboard():
             LEFT JOIN evaluations e ON r.repair_id = e.repair_id
             ORDER BY r.report_date DESC
         ''').fetchall()
-    # ถ้าเป็น User ธรรมดา ให้เห็นแค่ของตัวเอง
     else:
         all_repairs = conn.execute('''
             SELECT r.*, e.rating, e.comment
@@ -64,7 +60,6 @@ def dashboard():
         ''', (session['user_id'],)).fetchall()
     conn.close()
 
-    # แยกงานที่เสร็จแล้ว กับยังไม่เสร็จ
     active_repairs = []
     completed_repairs = []
     for repair in all_repairs:
@@ -73,7 +68,6 @@ def dashboard():
         else:
             active_repairs.append(repair)
     
-    # ส่งข้อมูลไปที่ index.html (ย้ำว่า index.html)
     return render_template('homepage.html', 
                            name=session['fullname'], 
                            role=session['role'], 
@@ -97,7 +91,7 @@ def report():
         return redirect(url_for('dashboard'))
     return render_template('report.html')
 
-# อัปเดตงานซ่อม (สำหรับ Admin)
+# อัปเดตงานซ่อม (แก้บั๊กบันทึกราคา)
 @app.route('/update/<int:repair_id>', methods=['GET', 'POST'])
 def update_repair(repair_id):
     if session.get('role') != 'admin':
@@ -110,7 +104,8 @@ def update_repair(repair_id):
         spare_parts = request.form.get('spare_parts', '')
         cost = request.form.get('cost', 0)
         
-        if not cost: cost = 0 # กันค่าว่าง
+        # แปลงค่าว่างให้เป็น 0 ป้องกัน Error
+        if not cost: cost = 0 
 
         conn.execute('''UPDATE repairs SET status=?, technician_note=?, spare_parts=?, cost=? WHERE repair_id=?''',
                      (status, technician_note, spare_parts, cost, repair_id))
@@ -122,12 +117,11 @@ def update_repair(repair_id):
     conn.close()
     return render_template('update_repair.html', repair=repair)
 
-# ประเมินความพึงพอใจ
+# ประเมิน
 @app.route('/evaluate/<int:repair_id>', methods=['GET', 'POST'])
 def evaluate(repair_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
     conn = get_db_connection()
     if request.method == 'POST':
         rating = request.form['rating']
@@ -137,19 +131,16 @@ def evaluate(repair_id):
         conn.commit()
         conn.close()
         return redirect(url_for('dashboard'))
-    
     repair = conn.execute('SELECT * FROM repairs WHERE repair_id = ?', (repair_id,)).fetchone()
     conn.close()
     return render_template('evaluate.html', repair=repair)
 
-# ลบรายการ
+# ลบ
 @app.route('/delete/<int:repair_id>')
 def delete_repair(repair_id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
-    
     conn = get_db_connection()
-    # Admin ลบได้หมด User ลบได้แค่ตอน Pending
     if session['role'] == 'admin':
         conn.execute('DELETE FROM evaluations WHERE repair_id = ?', (repair_id,))
         conn.execute('DELETE FROM repairs WHERE repair_id = ?', (repair_id,))
@@ -160,11 +151,10 @@ def delete_repair(repair_id):
         if check and check['status'] == 'Pending':
             conn.execute('DELETE FROM repairs WHERE repair_id = ?', (repair_id,))
             conn.commit()
-            
     conn.close()
     return redirect(url_for('dashboard'))
 
-# ออกจากระบบ
+# Logout
 @app.route('/logout')
 def logout():
     session.clear()

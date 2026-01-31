@@ -1,15 +1,17 @@
 import sqlite3
 import os
 
-# ลบฐานข้อมูลเก่าทิ้งก่อนเพื่อความชัวร์
-if os.path.exists("maintenance.db"):
-    os.remove("maintenance.db")
-    print("🗑️ ลบฐานข้อมูลเก่าแล้ว...")
+db_name = "maintenance.db"
 
-conn = sqlite3.connect('maintenance.db')
+# ลบของเก่าทิ้งเพื่อเริ่มใหม่แบบสะอาด (Clean Start)
+if os.path.exists(db_name):
+    os.remove(db_name)
+    print(f"🗑️ ลบฐานข้อมูลเก่า {db_name} แล้ว...")
+
+conn = sqlite3.connect(db_name)
 cursor = conn.cursor()
 
-# 1. ตาราง Users
+# 1. สร้างตาราง Users
 cursor.execute('''
 CREATE TABLE users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -20,7 +22,7 @@ CREATE TABLE users (
 )
 ''')
 
-# 2. ตาราง Repairs (รวม Cost และ Spare_parts แล้ว)
+# 2. สร้างตาราง Repairs (เพิ่ม spare_parts และ cost ให้แล้ว)
 cursor.execute('''
 CREATE TABLE repairs (
     repair_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -31,13 +33,13 @@ CREATE TABLE repairs (
     status TEXT DEFAULT 'Pending',
     report_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     technician_note TEXT,
-    spare_parts TEXT,
+    spare_parts TEXT, 
     cost INTEGER DEFAULT 0,
     FOREIGN KEY (user_id) REFERENCES users (user_id)
 )
 ''')
 
-# 3. ตาราง Evaluations
+# 3. สร้างตาราง Evaluations
 cursor.execute('''
 CREATE TABLE evaluations (
     eval_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -48,13 +50,13 @@ CREATE TABLE evaluations (
 )
 ''')
 
-# เพิ่มข้อมูลทดสอบ
+# เพิ่ม User และ Admin สำหรับทดสอบ
 users = [
     ('admin', '1234', 'Admin (ช่างเทคนิค)', 'admin'),
     ('student', '1234', 'Student (นักศึกษา)', 'user')
 ]
 cursor.executemany("INSERT INTO users (username, password, fullname, role) VALUES (?, ?, ?, ?)", users)
 
-print("✅ สร้างฐานข้อมูลใหม่สำเร็จ! (User: student/1234, Admin: admin/1234)")
 conn.commit()
 conn.close()
+print("✅ สร้างฐานข้อมูลใหม่สำเร็จ! (พร้อมใช้งาน)")

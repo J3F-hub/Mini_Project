@@ -2,16 +2,17 @@
 <html>
 <head>
     <title>อัปเดตงานซ่อม - IT Helpdesk</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         body { font-family: sans-serif; padding: 20px; max-width: 600px; margin: auto; }
-        form { border: 1px solid #ccc; padding: 20px; border-radius: 5px; }
+        form { border: 1px solid #ccc; padding: 20px; border-radius: 5px; background: white; }
         label { display: block; margin-top: 15px; font-weight: bold; }
-        input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; }
+        input, textarea, select { width: 100%; padding: 8px; margin-top: 5px; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc;}
         .readonly { background-color: #f0f0f0; color: #555; }
-        button { margin-top: 20px; padding: 10px 20px; background-color: #007bff; border: none; cursor: pointer; color: white; font-weight: bold; width: 100%; }
+        button { margin-top: 20px; padding: 10px 20px; background-color: #007bff; border: none; cursor: pointer; color: white; font-weight: bold; width: 100%; border-radius: 5px;}
         button:hover { background-color: #0056b3; }
         
-        /* กรอบใส่ราคา */
+        /* ส่วนกรอกราคา */
         .cost-section { background-color: #e9ecef; padding: 15px; border-radius: 8px; margin-top: 20px; border: 1px solid #ced4da; }
         .cost-label { color: #0056b3; font-size: 1.1em; }
     </style>
@@ -42,7 +43,7 @@
             <label class="cost-label">💰 สรุปค่าใช้จ่าย</label>
             
             <label>แจกแจงรายละเอียด (Cost Details):</label>
-            <textarea name="spare_parts" rows="2" placeholder="เช่น ค่าลง Windows 300, ค่าทำความสะอาด 100, ค่า RAM ใหม่ 900">{{ repair['spare_parts'] or '' }}</textarea>
+            <textarea name="spare_parts" rows="2" placeholder="เช่น ค่าลง Windows 300, ค่าทำความสะอาด 100">{{ repair['spare_parts'] or '' }}</textarea>
 
             <label>ราคารวมสุทธิ (Total Price):</label>
             <input type="number" name="cost" placeholder="ระบุยอดรวม (บาท)" value="{{ repair['cost'] or 0 }}" style="font-size: 1.2em; font-weight: bold; color: #d63384;">
@@ -51,6 +52,6 @@
         <button type="submit">💾 บันทึกการเปลี่ยนแปลง</button>
     </form>
 
-    <a href="{{ url_for('dashboard') }}" style="display:block; margin-top:15px; text-align:center;">❌ยกเลิก / ◀️กลับหน้าหลัก</a>
+    <a href="{{ url_for('dashboard') }}" style="display:block; margin-top:15px; text-align:center; text-decoration: none;">❌ยกเลิก / ◀️กลับหน้าหลัก</a>
 </body>
 </html>
