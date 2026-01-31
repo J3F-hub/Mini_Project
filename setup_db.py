@@ -51,7 +51,7 @@ CREATE TABLE evaluations (
 # เพิ่มข้อมูลทดสอบ
 users = [
     ('admin', '1234', 'Admin (ช่างเทคนิค)', 'admin'),
-    ('student', '1234', 'สมชาย ใจดี', 'user')
+    ('student', '1234', 'Student (นักศึกษา)', 'user')
 ]
 cursor.executemany("INSERT INTO users (username, password, fullname, role) VALUES (?, ?, ?, ?)", users)
 
