@@ -1,1 +1,4 @@
 ngrok http --url=overdeferentially-unsquirming-rank.ngrok-free.dev 5000
+
+นายสนธิ บกเขาแดง รหัสนักศึกษา 67319090012
+นายบุญญามีน หะยีลาเต๊ะ รหัสนักศึกษา 67319090004
