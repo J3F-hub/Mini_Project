@@ -3,9 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IT Helpdesk Dashboard</title>
+    <title>Dashboard - IT Helpdesk</title>
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        /* สไตล์สำหรับรูปสลิปจิ๋ว */
+        .slip-preview {
+            width: 80px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+            border: 2px solid #00b894;
+            transition: transform 0.2s;
+            cursor: pointer;
+            background-color: white;
+        }
+        .slip-preview:hover {
+            transform: scale(3);
+            z-index: 100;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            border-color: white;
+        }
+    </style>
 </head>
 <body>
 
@@ -13,7 +33,7 @@
     <header>
         <div>
             <h1>💻 ระบบแจ้งซ่อม IT Helpdesk</h1>
-            <span style="color: #b2bec3; font-size: 14px;">วิทยาลัยเทคนิค... (แผนกเทคโนโลยีคอมพิวเตอร์)</span>
+            <span style="color: #b2bec3; font-size: 14px;">บริการซ่อมอุปกรณ์ต่างๆ</span>
         </div>
         <div style="text-align: right;">
             <div class="user-badge">
@@ -34,10 +54,10 @@
         <thead>
             <tr>
                 <th width="15%">📅 วันที่</th>
+                <th width="15%">👤 ผู้ส่งซ่อม</th>
                 <th width="15%">🖥️ อุปกรณ์</th>
-                <th width="25%">⚠️ อาการ</th>
+                <th width="20%">⚠️ อาการ</th>
                 <th width="10%">📍 สถานที่</th>
-                {% if role == 'admin' %} <th width="15%">👤 ผู้แจ้ง</th> {% endif %}
                 <th width="10%">💡สถานะ</th>
                 <th>⚙️จัดการ</th>
             </tr>
@@ -46,17 +66,15 @@
             {% for repair in active_repairs %}
             <tr>
                 <td data-label="📅 วันที่" class="col-date">{{ repair['report_date'] }}</td>
+                <td data-label="👤 ผู้ส่งซ่อม" style="color: #ff9ff3; font-weight: bold;">👤 {{ repair['reporter_name'] }}</td>
                 <td data-label="🖥️ อุปกรณ์"><span class="col-device">{{ repair['device_name'] }}</span></td>
                 <td data-label="⚠️ อาการ" class="col-problem">{{ repair['problem_detail'] }}</td>
                 <td data-label="📍 สถานที่" class="col-location">{{ repair['location'] }}</td>
-                {% if role == 'admin' %} 
-                    <td data-label="👤 ผู้แจ้ง" class="col-user">{{ repair['fullname'] }}</td> 
-                {% endif %}
                 <td data-label="💡สถานะ"><span class="badge status-{{ repair['status'].split(' ')[0] }}">{{ repair['status'] }}</span></td>
                 <td data-label="⚙️จัดการ">
                     <div class="action-group">
                         {% if role == 'admin' %}
-                            <a href="{{ url_for('update_repair', repair_id=repair['repair_id']) }}" class="btn btn-update">✏️แก้ไข</a>
+                            <a href="{{ url_for('update_repair', repair_id=repair['repair_id']) }}" class="btn btn-update">✏️</a>
                             <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยืนยันลบ?');">🗑️</a>
                         {% else %}
                              {% if repair['status'] == 'Pending' %}
@@ -74,41 +92,59 @@
         </tbody>
     </table>
 
-    <h2 style="color: #1dd1a1; margin-top: 50px;">✅ ประวัติการซ่อมเสร็จสิ้น</h2>
+    <h2 style="color: #00b894; margin-top: 50px;">✅ ประวัติการซ่อมเสร็จสิ้น</h2>
     <table>
         <thead>
             <tr>
                 <th width="12%">📅 วันที่</th>
-                <th width="15%">🖥️ อุปกรณ์</th>
-                <th width="25%">🛠️ การแก้ไข</th>
-                <th width="15%">💰 ราคารวม</th>
-                <th width="10%">💡สถานะ</th>
+                <th width="15%">👤 ผู้ส่งซ่อม</th>
+                <th width="20%">🛠️ การแก้ไข</th>
+                <th width="20%">💰 การชำระเงิน</th>
                 <th>⭐ ประเมิน</th>
-                <th>⚙️จัดการ</th>
             </tr>
         </thead>
         <tbody>
             {% for repair in completed_repairs %}
             <tr>
                 <td data-label="📅 วันที่" class="col-date">{{ repair['report_date'] }}</td>
-                <td data-label="🖥️ อุปกรณ์"><span class="col-device">{{ repair['device_name'] }}</span></td>
+                <td data-label="👤 ผู้ส่งซ่อม" style="color: #ff9ff3;">👤 {{ repair['reporter_name'] }}</td>
+                
                 <td data-label="🛠️ การแก้ไข">
                     <div style="font-weight: 500; color: #1dd1a1;">✔ {{ repair['technician_note'] or '-' }}</div>
-                    <small style="color: #b2bec3;">(อาการเดิม: {{ repair['problem_detail'] }})</small>
+                    <small style="color: #b2bec3;">({{ repair['problem_detail'] }})</small>
                 </td>
-                <td data-label="💰 ราคารวม">
+                
+                <td data-label="💰 การชำระเงิน">
                     {% if repair['cost'] and repair['cost'] > 0 %}
-                        <div style="color: #ff9ff3; font-weight: bold;">฿{{ "{:,.0f}".format(repair['cost']) }}</div>
+                        <div style="font-weight: bold; color: #e84393; margin-bottom: 5px;">฿{{ "{:,.0f}".format(repair['cost']) }}</div>
+                        
+                        {% if repair['payment_status'] == 'Paid' %}
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span class="badge" style="background:#00b894; color:white; padding: 5px 10px;">ชำระแล้ว ✅</span>
+                                {% if repair['payment_slip'] %}
+                                    <a href="{{ url_for('static', filename='uploads/' + repair['payment_slip']) }}" target="_blank">
+                                        <img src="{{ url_for('static', filename='uploads/' + repair['payment_slip']) }}" class="slip-preview" title="คลิกเพื่อดูรูปใหญ่">
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            {% if role == 'user' %}
+                                <a href="{{ url_for('payment', repair_id=repair['repair_id']) }}" class="btn" style="background:#0984e3; color:white;">💸 แจ้งโอน</a>
+                            {% else %}
+                                <span style="color: #ff7675; font-size: 12px; border: 1px dashed #ff7675; padding: 2px 8px; border-radius: 5px;">รอการชำระเงิน...</span>
+                            {% endif %}
+                        {% endif %}
+
                     {% else %}
                         <span style="color: #b2bec3;">ฟรี</span>
                     {% endif %}
                 </td>
-                <td data-label="💡สถานะ"><span class="badge status-Completed">Completed</span></td>
+
                 <td data-label="⭐ ประเมิน">
                     {% if repair['rating'] %}
                         <div style="color: #feca57; letter-spacing: 2px;">{{ '★' * repair['rating'] }}</div>
                         {% if repair['comment'] %}
-                            <div style="font-size: 12px; color: #dfe6e9; margin-top: 5px; font-style: italic;">
+                            <div style="font-size: 13px; color: #dfe6e9; margin-top: 5px; font-style: italic; background: rgba(255,255,255,0.05); padding: 5px; border-radius: 5px;">
                                 "{{ repair['comment'] }}"
                             </div>
                         {% endif %}
@@ -120,40 +156,21 @@
                         {% endif %}
                     {% endif %}
                 </td>
-                <td data-label="⚙️จัดการ">
-                    {% if role == 'admin' %}
-                        <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ลบประวัติ?');">🗑️</a>
-                    {% endif %}
-                </td>
             </tr>
             {% else %}
-            <tr><td colspan="7" style="text-align: center; color: #b2bec3; padding: 40px;">ยังไม่มีประวัติการซ่อม</td></tr>
+            <tr><td colspan="5" style="text-align: center; color: #b2bec3; padding: 40px;">ยังไม่มีประวัติการซ่อม</td></tr>
             {% endfor %}
         </tbody>
     </table>
 
     <footer style="margin-top: 60px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px; text-align: center; color: #636e72;">
-        <div style="font-size: 14px; color: #b2bec3; margin-bottom: 10px;">
-            💻 ทีมผู้พัฒนาระบบ:
-        </div>
-        
+        <div style="font-size: 14px; color: #b2bec3; margin-bottom: 10px;">💻 ทีมผู้พัฒนาระบบ:</div>
         <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
-            <div style="color: #54a0ff; font-weight: bold;">
-                1. นายบุญญามีน หะยีลาเต๊ะ รหัสนักศึกษา 67319090004<span style="font-weight: normal; color: #636e72; font-size: 12px;"></span>
-            </div>
-            <div style="color: #54a0ff; font-weight: bold;">
-                2. นายสนธิ บกเขาแดง รหัสนักศึกษา 67319090012<span style="font-weight: normal; color: #636e72; font-size: 12px;"></span>
-            </div>
+            <div style="color: #54a0ff; font-weight: bold;">1. นายบุญญามีน หะยีลาเต๊ะ รหัสนักศึกษา 67319090004 <span style="font-weight: normal; color: #636e72; font-size: 12px;"></span></div>
+            <div style="color: #54a0ff; font-weight: bold;">2. นายสนธิ บกเขาแดง รหัสนักศึกษา 67319090012 <span style="font-weight: normal; color: #636e72; font-size: 12px;"></span></div>
         </div>
-
-        <div style="font-size: 12px; margin-top: 10px;">
-            แผนกเทคโนโลยีคอมพิวเตอร์
-        </div>
-        <div style="font-size: 11px; margin-top: 10px; opacity: 0.5;">
-            © 2026 IT Helpdesk System Project. All rights reserved.
-        </div>
+        <div style="font-size: 12px; margin-top: 10px;">แผนกเทคโนโลยีคอมพิวเตอร์</div>
     </footer>
-
 </div>
 
 </body>

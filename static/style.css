@@ -2,25 +2,25 @@
 @import url('https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap');
 
 :root {
-    --primary-blue: #54a0ff;      /* ฟ้าสว่างขึ้นสำหรับพื้นดำ */
-    --light-blue: #2e86de;        /* ฟ้าเข้ม */
-    --teal: #00d2d3;              /* เขียวน้ำทะเลสว่าง */
-    --bg-color: #1e272e;          /* พื้นหลังดำ */
-    --text-color: #dfe6e9;        /* ตัวหนังสือขาว */
+    --primary-blue: #54a0ff;
+    --light-blue: #2e86de;
+    --teal: #00d2d3;
+    --bg-color: #1e272e;
+    --text-color: #dfe6e9;
     --border-radius: 15px;
-    --card-bg: rgba(30, 39, 46, 0.95); /* สีพื้นการ์ด/กล่อง แบบดำโปร่งแสง */
-    --input-bg: #2f3640;          /* สีช่องกรอกข้อมูล */
-    --border-color: rgba(255,255,255,0.1); /* สีเส้นขอบจางๆ */
+    --card-bg: rgba(30, 39, 46, 0.95);
+    --input-bg: #2f3640;
+    --border-color: rgba(255,255,255,0.1);
 }
 
 body {
     font-family: 'Prompt', sans-serif;
     color: var(--text-color);
     margin: 0;
-    padding: 40px 20px;
+    padding: 0;
     min-height: 100vh;
     
-    /* --- พื้นหลังลายเรขาคณิต (เปลี่ยนเป็นโทนดำ-เทา) --- */
+    /* --- พื้นหลังลายเรขาคณิต (แก้ไขให้ไม่ยืด) --- */
     background-color: #1e272e;
     background-image: 
         linear-gradient(30deg, #2f3640 12%, transparent 12.5%, transparent 87%, #2f3640 87.5%, #2f3640),
@@ -29,22 +29,22 @@ body {
         linear-gradient(150deg, #2f3640 12%, transparent 12.5%, transparent 87%, #2f3640 87.5%, #2f3640),
         linear-gradient(60deg, #353b48 25%, transparent 25.5%, transparent 75%, #353b48 75%, #353b48),
         linear-gradient(60deg, #353b48 25%, transparent 25.5%, transparent 75%, #353b48 75%, #353b48);
-    background-size: 60px 100px;
+    background-size: 60px 100px; /* ขนาดลาย */
     background-position: 0 0, 0 0, 30px 50px, 30px 50px, 0 0, 30px 50px;
-    
-    display: flex;
-    justify-content: center;
+    background-attachment: fixed; /* สำคัญ! ล็อกพื้นหลังไม่ให้ยืดตามเนื้อหา */
 }
 
+/* กล่องหลัก (Dashboard) */
 .container {
-    width: 100%;
+    width: 90%; /* ปรับให้ไม่ชิดขอบจอเกินไป */
     max-width: 1200px;
-    background: var(--card-bg); /* เปลี่ยนเป็นสีดำโปร่งแสง */
+    background: var(--card-bg);
     padding: 40px;
     border-radius: 25px;
-    box-shadow: 0 20px 50px rgba(0,0,0,0.5); /* เงาเข้มขึ้น */
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
     backdrop-filter: blur(10px);
-    border: 1px solid var(--border-color); /* เพิ่มขอบบางๆ ให้เห็นชัดในพื้นดำ */
+    border: 1px solid var(--border-color);
+    margin: 40px auto; /* จัดกลางหน้าจออัตโนมัติ */
 }
 
 /* Header */
@@ -53,115 +53,51 @@ header {
     justify-content: space-between;
     align-items: center;
     padding-bottom: 20px;
-    border-bottom: 3px solid var(--border-color); /* เส้นคั่นสีจาง */
+    border-bottom: 3px solid var(--border-color);
     margin-bottom: 30px;
-}
-h1 { color: var(--primary-blue); margin: 0; display: flex; align-items: center; font-size: 24px;}
-.user-badge { background: #2f3640; padding: 8px 15px; border-radius: 30px; font-size: 14px; color: #b2bec3; font-weight: 600; border: 1px solid var(--border-color);}
-
-/* Headings */
-h2 {
-    font-size: 18px;
-    color: var(--primary-blue);
-    margin-top: 40px;
-    margin-bottom: 15px;
-    display: flex;
-    align-items: center;
-}
-h2::before { content: ''; display: inline-block; width: 8px; height: 25px; background: var(--teal); margin-right: 10px; border-radius: 4px;}
-
-/* Table Design */
-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 15px;
+    flex-wrap: wrap; 
+    gap: 15px;
 }
 
-th {
-    text-align: left;
-    color: #b2bec3;
-    font-weight: 500;
-    padding: 0 20px 10px 20px;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
+h1 { color: var(--primary-blue); margin: 0; font-size: 24px; }
+h2 { color: var(--primary-blue); margin-top: 40px; margin-bottom: 15px; font-size: 18px; }
 
-tbody tr {
-    background-color: rgba(255,255,255,0.05); /* เปลี่ยนพื้นหลังแถวเป็นสีจางๆ แทนสีขาว */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s;
-}
+/* Table Styles */
+table { width: 100%; border-collapse: separate; border-spacing: 0 15px; }
+th { text-align: left; color: #b2bec3; padding: 0 15px 10px; font-size: 14px; text-transform: uppercase; }
+tbody tr { background-color: rgba(255,255,255,0.05); transition: transform 0.2s; }
+tbody tr:hover { transform: scale(1.01); background-color: rgba(255,255,255,0.1); }
+td { padding: 20px; vertical-align: middle; color: white; border: none; }
+td:first-child { border-radius: 15px 0 0 15px; }
+td:last-child { border-radius: 0 15px 15px 0; }
 
-tbody tr:hover {
-    transform: scale(1.01);
-    background-color: rgba(255,255,255,0.1);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-}
-
-td {
-    padding: 20px;
-    vertical-align: middle;
-    border: none;
-    font-size: 15px;
-    color: white; /* บังคับตัวหนังสือขาว */
-}
-
-td:first-child { border-top-left-radius: var(--border-radius); border-bottom-left-radius: var(--border-radius); }
-td:last-child { border-top-right-radius: var(--border-radius); border-bottom-right-radius: var(--border-radius); }
-
-/* Data Styling */
-.col-date { font-size: 13px; color: #b2bec3; white-space: nowrap; }
-.col-device { font-weight: 700; color: var(--primary-blue); font-size: 16px; background: rgba(84, 160, 255, 0.1); padding: 5px 10px; border-radius: 8px; display: inline-block;}
-.col-problem { color: #dfe6e9; line-height: 1.4; }
-.col-location { font-weight: 600; color: var(--teal); }
-.col-user { font-size: 14px; font-weight: 500; color: #b2bec3; display: flex; align-items: center;}
-.col-user span { margin-left: 5px; }
-
-/* Status Badges */
-.badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; text-transform: uppercase; display: inline-block; text-align: center; min-width: 80px;}
+.user-badge { background: #2f3640; padding: 8px 15px; border-radius: 30px; font-size: 14px; color: #b2bec3; border: 1px solid var(--border-color); }
+.col-device { font-weight: 700; color: var(--primary-blue); background: rgba(84, 160, 255, 0.1); padding: 5px 10px; border-radius: 8px; white-space: nowrap; }
+.badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-block; }
 .status-Pending { background: #e17055; color: white; }
 .status-In { background: #0984e3; color: #fff; }
 .status-Completed { background: #00b894; color: white; }
 
-/* Buttons */
-.action-group { display: flex; gap: 8px; }
-.btn {
-    text-decoration: none;
-    padding: 8px 12px;
-    border-radius: 10px;
-    font-size: 13px;
-    font-weight: 600;
-    transition: 0.2s;
-    display: inline-flex;
-    align-items: center;
-    border: none;
-    cursor: pointer;
-}
+.btn { text-decoration: none; padding: 8px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; border: none; cursor: pointer; transition: 0.2s; }
 .btn:hover { transform: translateY(-2px); filter: brightness(1.2); }
-
-.btn-add { background: linear-gradient(45deg, #00b894, #00cec9); color: white; padding: 12px 25px; font-size: 16px; border-radius: 50px; box-shadow: 0 5px 15px rgba(0, 184, 148, 0.4);}
-.btn-update { background: #636e72; color: white; } /* ปุ่มแก้ไขสีเข้มขึ้น */
-.btn-update:hover { background: var(--primary-blue); color: white; }
+.btn-add { background: linear-gradient(45deg, #00b894, #00cec9); color: white; padding: 12px 25px; font-size: 16px; border-radius: 50px; }
+.btn-update { background: #636e72; color: white; }
 .btn-delete { background: #ff7675; color: white; }
 .btn-rate { background: #fdcb6e; color: #2d3436; }
 
-.cost-display { background: #2d3436; padding: 8px 15px; border-radius: 10px; font-weight: bold; color: #ff7675; display: inline-block; border: 1px solid var(--border-color);}
-
-/* =========================================================
-   ตกแต่งหน้า Login (Dark Mode)
-   ========================================================= */
-
+/* =========================================
+   🔐 Login Page & Auth (แก้ไขให้ตรงกลางเป๊ะ)
+   ========================================= */
 .auth-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80vh;
+    min-height: 100vh; /* ความสูงเต็มจอ */
     width: 100%;
 }
 
 .auth-box {
-    background: var(--card-bg); /* ดำโปร่งแสง */
+    background: var(--card-bg);
     padding: 40px;
     border-radius: 25px;
     border: 1px solid var(--border-color);
@@ -172,64 +108,72 @@ td:last-child { border-top-right-radius: var(--border-radius); border-bottom-rig
     text-align: center;
 }
 
-.auth-header h1 {
-    color: var(--primary-blue);
-    justify-content: center;
-    margin-bottom: 5px;
-}
-.auth-header p {
-    color: #b2bec3;
-    font-size: 14px;
-    margin-top: 0;
-    margin-bottom: 30px;
-}
+.auth-header h1 { color: var(--primary-blue); justify-content: center; margin-bottom: 5px; }
+.auth-header p { color: #b2bec3; font-size: 14px; margin-top: 0; margin-bottom: 30px; }
 
-/* ช่องกรอกข้อมูล Login */
-.input-group {
-    text-align: left;
-    margin-bottom: 20px;
-}
-.input-group label {
-    display: block;
-    color: var(--text-color);
-    font-size: 14px;
-    margin-bottom: 8px;
-    font-weight: 500;
-}
+.input-group { text-align: left; margin-bottom: 20px; }
+.input-group label { display: block; color: var(--text-color); font-size: 14px; margin-bottom: 8px; font-weight: 500; }
 .input-group input {
-    width: 100%;
-    padding: 12px 15px;
-    border-radius: 10px;
-    border: 1px solid #4b6584; /* ขอบสีเทาเข้ม */
-    background-color: var(--input-bg); /* พื้นหลังช่องกรอกสีดำ */
-    color: white; /* ตัวหนังสือขาว */
-    font-size: 14px;
-    box-sizing: border-box;
-    transition: 0.2s;
+    width: 100%; padding: 12px 15px; border-radius: 10px;
+    border: 1px solid #4b6584; background-color: var(--input-bg);
+    color: white; font-size: 14px; box-sizing: border-box; transition: 0.2s;
 }
 .input-group input:focus {
-    border-color: var(--primary-blue);
-    background-color: #353b48;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(84, 160, 255, 0.2);
+    border-color: var(--primary-blue); background-color: #353b48;
+    outline: none; box-shadow: 0 0 0 3px rgba(84, 160, 255, 0.2);
 }
 
-/* ปุ่ม Login */
 .btn-login {
-    width: 100%;
-    padding: 12px;
-    background: linear-gradient(45deg, #0984e3, #74b9ff);
-    color: white;
-    border: none;
-    border-radius: 50px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-    margin-top: 10px;
-    box-shadow: 0 5px 15px rgba(9, 132, 227, 0.3);
+    width: 100%; padding: 12px; background: linear-gradient(45deg, #0984e3, #74b9ff);
+    color: white; border: none; border-radius: 50px; font-size: 16px; font-weight: bold;
+    cursor: pointer; transition: 0.2s; margin-top: 10px;
 }
-.btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(9, 132, 227, 0.4);
+.btn-login:hover { transform: translateY(-2px); }
+
+/* =========================================
+   📱 Mobile Responsive (ปรับตารางเป็นการ์ด)
+   ========================================= */
+@media screen and (max-width: 768px) {
+    .container { padding: 20px; width: 95%; margin: 20px auto; }
+    
+    /* ซ่อนหัวตาราง */
+    table thead { display: none; }
+    
+    /* เปลี่ยนแถวให้เป็นการ์ด */
+    table, tbody, tr, td { display: block; width: 100%; box-sizing: border-box; }
+    
+    tbody tr {
+        margin-bottom: 20px;
+        background: rgba(45, 52, 54, 0.8);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 15px;
+        padding: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    }
+    
+    td {
+        text-align: right;
+        padding: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    td:last-child { border-bottom: none; }
+    
+    /* ใส่หัวข้อหน้าข้อมูล (ดึงจาก data-label ใน HTML) */
+    td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        color: #74b9ff;
+        text-transform: uppercase;
+        font-size: 12px;
+        margin-right: 10px;
+    }
+    
+    .action-group { justify-content: flex-end; }
+    
+    /* ปรับ Slip Preview ในมือถือ */
+    .slip-preview { width: 60px; height: 40px; }
 }

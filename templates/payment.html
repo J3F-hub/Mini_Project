@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แจ้งชำระเงิน - IT Helpdesk</title>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container" style="max-width: 450px; text-align: center;">
+        <h1 style="color: #0984e3;">💸 แจ้งชำระค่าบริการ</h1>
+        
+        <div style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 15px; margin-bottom: 20px;">
+            <p style="margin: 0; color: #b2bec3;">ยอดที่ต้องชำระ</p>
+            <div style="font-size: 40px; font-weight: bold; color: #e84393;">฿{{ "{:,.0f}".format(repair['cost']) }}</div>
+            <p style="font-size: 13px; color: #dfe6e9; margin-top: 10px;">อุปกรณ์: {{ repair['device_name'] }} ({{ repair['reporter_name'] }})</p>
+        </div>
+
+        <p style="color: #b2bec3;">📷 สแกน QR Code เพื่อชำระเงิน</p>
+        <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_code_for_mobile_English_Wikipedia.svg" 
+             style="width: 150px; border-radius: 10px; border: 5px solid white; margin-bottom: 20px;">
+
+        <form method="POST" enctype="multipart/form-data">
+            <label style="display: block; text-align: left; margin-bottom: 10px; color: #74b9ff;">📄 แนบหลักฐานการโอน (Slip)</label>
+            <input type="file" name="slip" accept="image/*" required 
+                   style="background: #2d3436; color: white; padding: 10px; border-radius: 10px; width: 100%; border: 1px solid #636e72;">
+            
+            <button type="submit" class="btn btn-add" style="width: 100%; margin-top: 20px; background: linear-gradient(45deg, #0984e3, #6c5ce7);">
+                ✅ ยืนยันการแจ้งโอน
+            </button>
+        </form>
+
+        <a href="{{ url_for('dashboard') }}" style="display:block; margin-top:15px; color: #b2bec3; text-decoration: none;">กลับหน้าหลัก</a>
+    </div>
+</body>
+</html>
