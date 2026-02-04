@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
-        /* สไตล์สำหรับรูปสลิปจิ๋ว */
         .slip-preview {
             width: 80px;
             height: 50px;
@@ -33,7 +32,7 @@
     <header>
         <div>
             <h1>💻 ระบบแจ้งซ่อม IT Helpdesk</h1>
-            <span style="color: #b2bec3; font-size: 14px;">บริการซ่อมอุปกรณ์ต่างๆ</span>
+            <span style="color: #b2bec3; font-size: 14px;">แผนกเทคโนโลยีคอมพิวเตอร์</span>
         </div>
         <div style="text-align: right;">
             <div class="user-badge">
@@ -99,8 +98,9 @@
                 <th width="12%">📅 วันที่</th>
                 <th width="15%">👤 ผู้ส่งซ่อม</th>
                 <th width="20%">🛠️ การแก้ไข</th>
-                <th width="20%">💰 การชำระเงิน</th>
-                <th>⭐ ประเมิน</th>
+                <th width="15%">💰 การชำระเงิน</th>
+                <th width="15%">⭐ ประเมิน</th>
+                <th>⚙️จัดการ</th>
             </tr>
         </thead>
         <tbody>
@@ -156,9 +156,18 @@
                         {% endif %}
                     {% endif %}
                 </td>
+
+                <td data-label="⚙️จัดการ">
+                    {% if role == 'admin' %}
+                        <div class="action-group">
+                            <a href="{{ url_for('update_repair', repair_id=repair['repair_id']) }}" class="btn btn-update">✏️</a>
+                            <a href="{{ url_for('delete_repair', repair_id=repair['repair_id']) }}" class="btn btn-delete" onclick="return confirm('ยืนยันลบประวัตินี้? ข้อมูลจะหายถาวร');">🗑️</a>
+                        </div>
+                    {% endif %}
+                </td>
             </tr>
             {% else %}
-            <tr><td colspan="5" style="text-align: center; color: #b2bec3; padding: 40px;">ยังไม่มีประวัติการซ่อม</td></tr>
+            <tr><td colspan="7" style="text-align: center; color: #b2bec3; padding: 40px;">ยังไม่มีประวัติการซ่อม</td></tr>
             {% endfor %}
         </tbody>
     </table>
