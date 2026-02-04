@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
+        /* สไตล์สำหรับรูปสลิปจิ๋ว */
         .slip-preview {
             width: 80px;
             height: 50px;
@@ -122,8 +123,8 @@
                             <div style="display: flex; align-items: center; gap: 10px;">
                                 <span class="badge" style="background:#00b894; color:white; padding: 5px 10px;">ชำระแล้ว ✅</span>
                                 {% if repair['payment_slip'] %}
-                                    <a href="{{ url_for('static', filename='uploads/' + repair['payment_slip']) }}" target="_blank">
-                                        <img src="{{ url_for('static', filename='uploads/' + repair['payment_slip']) }}" class="slip-preview" title="คลิกเพื่อดูรูปใหญ่">
+                                    <a href="{{ repair['payment_slip'] }}" target="_blank">
+                                        <img src="{{ repair['payment_slip'] }}" class="slip-preview" title="คลิกเพื่อดูรูปใหญ่">
                                     </a>
                                 {% endif %}
                             </div>
@@ -176,7 +177,7 @@
         <div style="font-size: 14px; color: #b2bec3; margin-bottom: 10px;">💻 ทีมผู้พัฒนาระบบ:</div>
         <div style="display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
             <div style="color: #54a0ff; font-weight: bold;">1. นายบุญญามีน หะยีลาเต๊ะ รหัสนักศึกษา 67319090004 <span style="font-weight: normal; color: #636e72; font-size: 12px;"></span></div>
-            <div style="color: #54a0ff; font-weight: bold;">2. นายสนธิ บกเขาแดง รหัสนักศึกษา 67319090012 <span style="font-weight: normal; color: #636e72; font-size: 12px;"></span></div>
+            <div style="color: #54a0ff; font-weight: bold;">2. นายสนธิ บกเขาแดง รหัสนักศึกษา 67319090012 <span style="font-weight: normal; color: #636e72; font-size: 12px;">(รหัสนักศึกษา XXXXX)</span></div>
         </div>
         <div style="font-size: 12px; margin-top: 10px;">แผนกเทคโนโลยีคอมพิวเตอร์</div>
     </footer>
