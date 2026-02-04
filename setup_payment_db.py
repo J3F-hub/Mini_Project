@@ -62,4 +62,4 @@ cursor.executemany("INSERT INTO users (username, password, fullname, role) VALUE
 
 conn.commit()
 conn.close()
-print("✅ สร้างฐานข้อมูลใหม่ + ระบบชำระเงิน สำเร็จ!")
+print("✅ สร้างฐานข้อมูลใหม่ + ระบบชำระเงิน สำเร็จ!")   
