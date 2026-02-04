@@ -11,18 +11,18 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# --- ส่วนซ่อมฐานข้อมูลอัตโนมัติ (Auto-Fix Database) ---
+# --- ส่วนซ่อมฐานข้อมูล + ฝังข้อมูลตัวอย่าง (Auto-Fix & Seed) ---
 def get_db_connection():
     conn = sqlite3.connect('maintenance.db')
     conn.row_factory = sqlite3.Row
     return conn
 
 def initialize_database():
-    """ฟังก์ชันนี้จะรันทุกครั้งที่เริ่มระบบ เพื่อตรวจสอบและสร้างฐานข้อมูล"""
+    """สร้างตารางและยัดข้อมูลตัวอย่างถ้าระบบถูกรีเซ็ต"""
     conn = sqlite3.connect('maintenance.db')
     cursor = conn.cursor()
     
-    # 1. สร้างตาราง Users (ถ้ายังไม่มี)
+    # 1. สร้างตารางต่างๆ
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS users (
         user_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -33,7 +33,6 @@ def initialize_database():
     )
     ''')
 
-    # 2. สร้างตาราง Repairs (ถ้ายังไม่มี)
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS repairs (
         repair_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,30 +45,13 @@ def initialize_database():
         technician_note TEXT,
         spare_parts TEXT,
         cost INTEGER DEFAULT 0,
+        reporter_name TEXT,
+        payment_status TEXT DEFAULT 'Unpaid',
+        payment_slip TEXT,
         FOREIGN KEY (user_id) REFERENCES users (user_id)
     )
     ''')
 
-    # 3. ตรวจสอบและเพิ่มคอลัมน์ที่ขาดหายไป (Migration)
-    # พยายามเพิ่ม reporter_name
-    try:
-        cursor.execute("ALTER TABLE repairs ADD COLUMN reporter_name TEXT")
-    except sqlite3.OperationalError:
-        pass # ถ้ามีอยู่แล้วก็ข้ามไป
-
-    # พยายามเพิ่ม payment_status
-    try:
-        cursor.execute("ALTER TABLE repairs ADD COLUMN payment_status TEXT DEFAULT 'Unpaid'")
-    except sqlite3.OperationalError:
-        pass
-
-    # พยายามเพิ่ม payment_slip
-    try:
-        cursor.execute("ALTER TABLE repairs ADD COLUMN payment_slip TEXT")
-    except sqlite3.OperationalError:
-        pass
-
-    # 4. สร้างตาราง Evaluations
     cursor.execute('''
     CREATE TABLE IF NOT EXISTS evaluations (
         eval_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -80,28 +62,51 @@ def initialize_database():
     )
     ''')
 
-    # 5. เพิ่ม User Admin และ Student (ถ้ายังไม่มี)
-    try:
-        cursor.execute("INSERT INTO users (username, password, fullname, role) VALUES (?, ?, ?, ?)",
-                       ('admin', '1234', 'Admin (ช่างเทคนิค)', 'admin'))
-        cursor.execute("INSERT INTO users (username, password, fullname, role) VALUES (?, ?, ?, ?)",
-                       ('student', '1234', 'Student (นักศึกษา)', 'user'))
-    except sqlite3.IntegrityError:
-        pass # ถ้ามี User อยู่แล้วก็ไม่ต้องทำอะไร
+    # --- ส่วนสำคัญ: ยัดข้อมูลตัวอย่าง (Seeding) ---
+    # เช็คก่อนว่ามี User หรือยัง ถ้าไม่มีค่อยเพิ่ม
+    check_user = cursor.execute("SELECT count(*) FROM users").fetchone()[0]
+    if check_user == 0:
+        print("🌱 Database ว่างเปล่า... กำลังสร้างข้อมูลตัวอย่าง...")
+        
+        # 1. เพิ่ม User
+        users = [
+            ('admin', '1234', 'Admin (ช่างเทคนิค)', 'admin'),
+            ('student', '1234', 'Student (นักศึกษา)', 'user')
+        ]
+        cursor.executemany("INSERT INTO users (username, password, fullname, role) VALUES (?, ?, ?, ?)", users)
+
+        # 2. เพิ่มงานซ่อมตัวอย่าง (เพื่อให้เปิดมาแล้วไม่โล่ง)
+        # งานที่ 1: รอซ่อม
+        cursor.execute('''
+            INSERT INTO repairs (user_id, reporter_name, device_name, problem_detail, location, status)
+            VALUES (?, ?, ?, ?, ?, ?)
+        ''', (2, 'สมชาย ใจดี', 'PC-05', 'เปิดไม่ติด จอดับ', 'ห้อง Lab 1', 'Pending'))
+
+        # งานที่ 2: ซ่อมเสร็จแล้ว (มีราคา + จ่ายแล้ว + มีสลิป)
+        # หมายเหตุ: sample_slip.jpg ต้องมีไฟล์จริงๆ ใน static/uploads นะ
+        cursor.execute('''
+            INSERT INTO repairs (user_id, reporter_name, device_name, problem_detail, location, status, technician_note, cost, payment_status, payment_slip)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (2, 'สมหญิง เรียนเก่ง', 'Notebook Dell', 'ลง Windows ใหม่', 'ห้องพักครู', 'Completed', 'ลง Windows 10 Pro ให้แล้ว', 300, 'Paid', 'sample_slip.jpg'))
+
+        # 3. เพิ่มรีวิวตัวอย่าง
+        cursor.execute('''
+            INSERT INTO evaluations (repair_id, rating, comment) VALUES (?, ?, ?)
+        ''', (2, 5, 'บริการดีมากครับ ช่างพูดเพราะ'))
+
+        print("✅ เพิ่มข้อมูลตัวอย่างสำเร็จ!")
 
     conn.commit()
     conn.close()
-    print("✅ Database initialized and checked successfully!")
 
-# เรียกใช้ฟังก์ชันซ่อมฐานข้อมูลทันทีที่เปิดไฟล์
+# เรียกใช้งานทันทีที่รัน
 initialize_database()
 
 # ----------------------------------------------------
 
 @app.route('/')
 def home():
-    if 'user_id' in session:
-        return redirect(url_for('dashboard'))
+    if 'user_id' in session: return redirect(url_for('dashboard'))
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
