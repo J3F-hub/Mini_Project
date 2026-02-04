@@ -11,10 +11,92 @@ UPLOAD_FOLDER = 'static/uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+# --- ส่วนซ่อมฐานข้อมูลอัตโนมัติ (Auto-Fix Database) ---
 def get_db_connection():
     conn = sqlite3.connect('maintenance.db')
     conn.row_factory = sqlite3.Row
     return conn
+
+def initialize_database():
+    """ฟังก์ชันนี้จะรันทุกครั้งที่เริ่มระบบ เพื่อตรวจสอบและสร้างฐานข้อมูล"""
+    conn = sqlite3.connect('maintenance.db')
+    cursor = conn.cursor()
+    
+    # 1. สร้างตาราง Users (ถ้ายังไม่มี)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS users (
+        user_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        username TEXT NOT NULL UNIQUE,
+        password TEXT NOT NULL,
+        fullname TEXT NOT NULL,
+        role TEXT NOT NULL DEFAULT 'user'
+    )
+    ''')
+
+    # 2. สร้างตาราง Repairs (ถ้ายังไม่มี)
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS repairs (
+        repair_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        device_name TEXT NOT NULL,
+        problem_detail TEXT NOT NULL,
+        location TEXT NOT NULL,
+        status TEXT DEFAULT 'Pending',
+        report_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        technician_note TEXT,
+        spare_parts TEXT,
+        cost INTEGER DEFAULT 0,
+        FOREIGN KEY (user_id) REFERENCES users (user_id)
+    )
+    ''')
+
+    # 3. ตรวจสอบและเพิ่มคอลัมน์ที่ขาดหายไป (Migration)
+    # พยายามเพิ่ม reporter_name
+    try:
+        cursor.execute("ALTER TABLE repairs ADD COLUMN reporter_name TEXT")
+    except sqlite3.OperationalError:
+        pass # ถ้ามีอยู่แล้วก็ข้ามไป
+
+    # พยายามเพิ่ม payment_status
+    try:
+        cursor.execute("ALTER TABLE repairs ADD COLUMN payment_status TEXT DEFAULT 'Unpaid'")
+    except sqlite3.OperationalError:
+        pass
+
+    # พยายามเพิ่ม payment_slip
+    try:
+        cursor.execute("ALTER TABLE repairs ADD COLUMN payment_slip TEXT")
+    except sqlite3.OperationalError:
+        pass
+
+    # 4. สร้างตาราง Evaluations
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS evaluations (
+        eval_id INTEGER PRIMARY KEY AUTOINCREMENT,
+        repair_id INTEGER NOT NULL,
+        rating INTEGER NOT NULL,
+        comment TEXT,
+        FOREIGN KEY (repair_id) REFERENCES repairs (repair_id)
+    )
+    ''')
+
+    # 5. เพิ่ม User Admin และ Student (ถ้ายังไม่มี)
+    try:
+        cursor.execute("INSERT INTO users (username, password, fullname, role) VALUES (?, ?, ?, ?)",
+                       ('admin', '1234', 'Admin (ช่างเทคนิค)', 'admin'))
+        cursor.execute("INSERT INTO users (username, password, fullname, role) VALUES (?, ?, ?, ?)",
+                       ('student', '1234', 'Student (นักศึกษา)', 'user'))
+    except sqlite3.IntegrityError:
+        pass # ถ้ามี User อยู่แล้วก็ไม่ต้องทำอะไร
+
+    conn.commit()
+    conn.close()
+    print("✅ Database initialized and checked successfully!")
+
+# เรียกใช้ฟังก์ชันซ่อมฐานข้อมูลทันทีที่เปิดไฟล์
+initialize_database()
+
+# ----------------------------------------------------
 
 @app.route('/')
 def home():
@@ -45,7 +127,6 @@ def dashboard():
     if 'user_id' not in session: return redirect(url_for('login'))
     conn = get_db_connection()
     
-    # ดึงข้อมูลมาทั้งหมด
     if session['role'] == 'admin':
         all_repairs = conn.execute('''
             SELECT r.*, e.rating, e.comment
@@ -72,7 +153,6 @@ def dashboard():
                            active_repairs=active_repairs, 
                            completed_repairs=completed_repairs)
 
-# แจ้งซ่อม (บันทึกชื่อผู้ส่ง)
 @app.route('/report', methods=['GET', 'POST'])
 def report():
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -114,7 +194,6 @@ def update_repair(repair_id):
     conn.close()
     return render_template('update_repair.html', repair=repair)
 
-# --- ระบบชำระเงิน (แก้ใหม่: อัปโหลดแล้วเป็น Paid เลย) ---
 @app.route('/payment/<int:repair_id>', methods=['GET', 'POST'])
 def payment(repair_id):
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -129,7 +208,6 @@ def payment(repair_id):
             filename = secure_filename(f"slip_{repair_id}_{file.filename}")
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             
-            # แก้ตรงนี้: เปลี่ยนสถานะเป็น 'Paid' ทันที
             conn.execute("UPDATE repairs SET payment_slip = ?, payment_status = 'Paid' WHERE repair_id = ?", 
                          (filename, repair_id))
             conn.commit()
